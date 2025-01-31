@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-ui">
+        <div class="stats">
+            <div class="score">🎯 <span id="score">0</span></div>
+            <div class="timer">⏰ <span id="timer">15</span></div>
+        </div>
+    </div>
+    <div class="emoji-container"></div>
+    <div class="game-over" style="display: none;">
+        <div class="game-over-content">
+            <div class="final-score">🏆 <span id="final-score">0</span></div>
+            <div id="emoji-stats"></div>
+            <button id="restart-button">🔄</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
