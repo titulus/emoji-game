@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const badEmojis = ['💀', '🦠', '🤬', '☠️', '💩'];
     const burstEmojis = ['🌟', '✨', '💥', '⭐', '🕸️', '🔅', '🔆'];
     
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    let audioContext;
     
     let score = 0;
     let timeLeft = 15;
@@ -18,7 +18,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let countdownInterval;
     let emojiStats = {};
 
+    function initAudio() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+    }
+
     function playSpawnSound(size) {
+        if (!audioContext || audioContext.state !== 'running') return;
+        
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
 
@@ -39,6 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function playClickSound() {
+        if (!audioContext || audioContext.state !== 'running') return;
+        
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
 
@@ -57,6 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function playBadClickSound() {
+        if (!audioContext || audioContext.state !== 'running') return;
+        
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
 
@@ -158,6 +173,7 @@ function createParticles(x, y, isBad = false) {
         emoji.addEventListener('click', (e) => {
             if (!gameActive) return;
             
+            initAudio(); // Initialize audio on first interaction
             const rect = emoji.getBoundingClientRect();
             
             if (emoji.classList.contains('bad-emoji')) {
