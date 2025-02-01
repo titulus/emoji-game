@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emoji Game</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="/sdk.js"></script>
+    <script>
+        YaGames.init().then(ysdk => {
+            console.log('SDK initialized');
+        });
+    </script>
 </head>
 <body>
     <div class="game-ui">
