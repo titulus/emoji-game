@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const finalScoreElement = document.getElementById('final-score');
     const restartButton = document.getElementById('restart-button');
     const soundToggleButton = document.getElementById('sound-toggle');
+    const startScreen = document.getElementById('start-screen');
+    const startButton = document.getElementById('start-button');
 
     const goodEmojis = ['🍋', '🍎', '🍊', '🍌', '🍉', '🍇', '🍓', '🥝', '🥭', '🍍', '🥑', '🍒'];
     const badEmojis = ['💀', '🦠', '🤬', '☠️', '💩'];
@@ -217,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
             }
 
-            initAudio(); // Initialize audio on first interaction
             const rect = emoji.getBoundingClientRect();
 
             if (emoji.classList.contains('bad-emoji')) {
@@ -383,6 +384,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('blur', pauseGame);
     window.addEventListener('focus', resumeGame);
 
-    // Start the game
-    startGame();
+    // Remove automatic start, instead wait for start button click
+    const handleStartButton = (e) => {
+        if (e.cancelable) e.preventDefault();
+        initAudio(); // Initialize audio on first interaction
+        startGame();
+        startScreen.style.display = 'none';
+    };
+    startButton.addEventListener('mousedown', handleStartButton);
+    startButton.addEventListener('touchstart', handleStartButton, { passive: false });
 });

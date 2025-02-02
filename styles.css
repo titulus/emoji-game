@@ -207,3 +207,30 @@ body {
         opacity: 0;
     }
 }
+ 
+/* Start Screen Styling */
+.start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#start-button {
+    background: none;
+    border: none;
+    font-size: 3rem;
+    cursor: pointer;
+    padding: 10px;
+    transition: transform 0.2s;
+    color: white;
+}
+#start-button:hover {
+    transform: scale(1.2);
+}
