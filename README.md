@@ -1,6 +1,6 @@
 # Emoji Game
 
-An interactive game where you catch programming-themed emojis before time runs out!
+An interactive game where you catch fruit-themed emojis before time runs out!
 
 ## Game Features
 
@@ -9,14 +9,14 @@ An interactive game where you catch programming-themed emojis before time runs o
     - Points (1-10) based on emoji size and speed
     - Smaller and faster emojis are worth more points
   - Avoid bad emojis (💀, 🦠, 🤬, ☠️, 💩) which decrease score and time
-- **Time Limit**: 15-second countdown per round
+- **Time Limit**: 30-second countdown per round
   - Bonus time for high-scoring hits (>7 points)
   - Time decreases when hitting bad emojis
 - **Dynamic Spawning**: Emojis appear randomly from the bottom of the screen
 - **Size Variation**: Each emoji appears in different sizes
 - **Interactive Effects**: 
   - Emojis burst into particles when clicked
-  - Particle effects with sparkle emojis (🌟, ✨, 💥, ⭐, 🕸️, 🔅, 🔆)
+  - Particle effects with sparkle emojis (🌟, ✨, 💥, ⭐, 🔅, 🔆)
 - **Audio Feedback**: 
   - Spawn sounds with pitch varying by emoji size
   - Click sounds with smooth fade in/out effects
@@ -25,7 +25,7 @@ An interactive game where you catch programming-themed emojis before time runs o
 ## How to Play
 
 1. Open `index.html` in your browser
-2. Click or tap good emojis (🧑‍💻, 💻, 📊, 🛠️, 📚, 🌐, 🔍, 📈, 📄, 🔑, 🔒, 🔓) to earn points
+2. Click or tap good emojis (🍋, 🍎, 🍊, 🍌, 🍉, 🍇, 🍓, 🥝, 🥭, 🍍, 🥑, 🍒) to earn points
 3. Avoid bad emojis (💀, 🦠, 🤬, ☠️, 💩) - they reduce score and time!
 4. Smaller and faster emojis are worth more points - try to catch them!
 5. Score as many points as possible before time runs out
