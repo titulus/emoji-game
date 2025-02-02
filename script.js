@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+
     const emojiContainer = document.querySelector('.emoji-container');
     const scoreElement = document.getElementById('score');
     const timerElement = document.getElementById('timer');
@@ -19,6 +20,32 @@ document.addEventListener('DOMContentLoaded', () => {
     let countdownInterval;
     let emojiStats = {};
     let soundEnabled = true;
+    let isPaused = false;
+
+    function pauseGame() {
+        if (!isPaused && gameActive) {
+            isPaused = true;
+            gameActive = false;
+            clearInterval(countdownInterval);
+            // Pause all emoji animations
+            document.querySelectorAll('.emoji').forEach(emoji => {
+                emoji.style.animationPlayState = 'paused';
+            });
+        }
+    }
+
+    function resumeGame() {
+        if (isPaused && !gameOverScreen.style.display.includes('flex')) {
+            isPaused = false;
+            gameActive = true;
+            countdownInterval = setInterval(updateTimer, 1000);
+            scheduleNextEmoji();
+            // Resume all emoji animations
+            document.querySelectorAll('.emoji').forEach(emoji => {
+                emoji.style.animationPlayState = 'running';
+            });
+        }
+    }
 
     function initAudio() {
         if (!audioContext) {
@@ -310,6 +337,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('contextmenu', (e) => {
         e.preventDefault();
     });
+
+    // Pause and resume game on visibility change
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            pauseGame();
+        } else {
+            resumeGame();
+        }
+    });
+
+    // Pause and resume game on window blur and focus
+    window.addEventListener('blur', pauseGame);
+    window.addEventListener('focus', resumeGame);
 
     // Start the game
     startGame();
