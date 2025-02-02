@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameOverScreen = document.querySelector('.game-over');
     const finalScoreElement = document.getElementById('final-score');
     const restartButton = document.getElementById('restart-button');
+    const soundToggleButton = document.getElementById('sound-toggle');
 
     const goodEmojis = ['🍋', '🍎', '🍊', '🍌', '🍉', '🍇', '🍓', '🥝', '🥭', '🍍', '🥑', '🍒'];
     const badEmojis = ['💀', '🦠', '🤬', '☠️', '💩'];
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let gameActive = false;
     let countdownInterval;
     let emojiStats = {};
+    let soundEnabled = true;
 
     function initAudio() {
         if (!audioContext) {
@@ -27,8 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        soundToggleButton.textContent = soundEnabled ? '🔊' : '🔇';
+    }
+
     function playSpawnSound(size) {
-        if (!audioContext || audioContext.state !== 'running') return;
+        if (!audioContext || audioContext.state !== 'running' || !soundEnabled) return;
 
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
@@ -50,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function playClickSound() {
-        if (!audioContext || audioContext.state !== 'running') return;
+        if (!audioContext || audioContext.state !== 'running' || !soundEnabled) return;
 
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
@@ -70,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function playBadClickSound() {
-        if (!audioContext || audioContext.state !== 'running') return;
+        if (!audioContext || audioContext.state !== 'running' || !soundEnabled) return;
 
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
@@ -293,6 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event Listeners
     restartButton.addEventListener('click', startGame);
+    soundToggleButton.addEventListener('click', toggleSound);
 
     // Prevent selection and context menu on the entire document
     document.addEventListener('selectstart', (e) => {
