@@ -294,6 +294,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event Listeners
     restartButton.addEventListener('click', startGame);
 
+    // Prevent selection and context menu on the entire document
+    document.addEventListener('selectstart', (e) => {
+        e.preventDefault();
+    });
+
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+
     // Start the game
     startGame();
 });
