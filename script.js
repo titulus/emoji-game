@@ -137,11 +137,10 @@ document.addEventListener('DOMContentLoaded', () => {
             particle.classList.add('particle');
             if (isBad) {
                 particle.classList.add('bad-particle');
-                particle.innerText = '💥'; // Always use explosion for bad emojis
+                particle.innerText = '❌';
             } else {
                 particle.innerText = burstEmojis[Math.floor(Math.random() * burstEmojis.length)];
             }
-            particle.innerText = burstEmojis[Math.floor(Math.random() * burstEmojis.length)];
             
             const angle = (Math.PI * 2 * i) / particleCount;
             const distance = 100;
