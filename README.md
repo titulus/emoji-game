@@ -1,50 +1,62 @@
 # Emoji Game
 
-An interactive game where you catch fruit-themed emojis before time runs out!
+An interactive game where you catch good emojis and avoid bad ones to score points. Experience dynamic gameplay with responsive audio-visual effects, automatic pause/resume, and YaGames SDK integration for a seamless gaming experience.
 
 ## Game Features
 
 - **Score System**:
-  - Earn points by clicking good emojis
-    - Points (1-10) based on emoji size and speed
-    - Smaller and faster emojis are worth more points
-  - Avoid bad emojis (💀, 🦠, 🤬, ☠️, 💩) which decrease score and time
-- **Time Limit**: 30-second countdown per round
-  - Bonus time for high-scoring hits (>7 points)
-  - Time decreases when hitting bad emojis
-- **Dynamic Spawning**: Emojis appear randomly from the bottom of the screen
-- **Size Variation**: Each emoji appears in different sizes
-- **Interactive Effects**: 
-  - Emojis burst into particles when clicked
-  - Particle effects with sparkle emojis (🌟, ✨, 💥, ⭐, 🔅, 🔆)
-- **Audio Feedback**: 
-  - Spawn sounds with pitch varying by emoji size
-  - Click sounds with smooth fade in/out effects
-  - Special sound for bad emojis
+  - Earn points by clicking on good emojis.
+  - Points range from 1 to 10, based on the emoji's size and speed (smaller and faster emojis yield higher scores).
+  - Hitting a high-scoring emoji awards bonus time.
+  - Avoid bad emojis (💀, 🦠, 🤬, ☠️, 💩) which decrease your score and remaining time.
+- **Time Limit**:
+  - Each round lasts 30 seconds.
+  - Bonus time is added for high-scoring hits.
+  - The game automatically ends when time runs out.
+- **Dynamic Spawning**:
+  - Emojis appear randomly from the bottom of the screen.
+  - Spawn intervals decrease as your score increases, increasing the game's difficulty.
+- **Size Variation & Interactive Effects**:
+  - Each emoji appears in a random size, affecting both its score and the associated sound effects.
+  - Clicking an emoji triggers a burst of particles and a corresponding sound effect.
+- **Audio Feedback**:
+  - Utilizes the Web Audio API for dynamic sound effects.
+  - Spawn sounds, click sounds, and distinct sounds for bad emojis enhance the gameplay experience.
+- **Automatic Pause/Resume**:
+  - The game automatically pauses when the browser tab loses focus or becomes hidden, and resumes upon reactivation.
+- **YaGames SDK Integration**:
+  - The game initializes the YaGames SDK on load for additional features such as gameplay tracking and leaderboard submissions.
 
 ## How to Play
 
-1. Open `index.html` in your browser
-2. Click or tap good emojis (🍋, 🍎, 🍊, 🍌, 🍉, 🍇, 🍓, 🥝, 🥭, 🍍, 🥑, 🍒) to earn points
-3. Avoid bad emojis (💀, 🦠, 🤬, ☠️, 💩) - they reduce score and time!
-4. Smaller and faster emojis are worth more points - try to catch them!
-5. Score as many points as possible before time runs out
-6. When game ends, click "Play Again" to start a new round
+1. Open `index.html` in your browser.
+2. Click or tap good emojis (🍋, 🍎, 🍊, 🍌, 🍉, 🍇, 🍓, 🥝, 🥭, 🍍, 🥑, 🍒) to earn points.
+3. Avoid bad emojis (💀, 🦠, 🤬, ☠️, 💩) which reduce your score and time.
+4. Aim for smaller and faster emojis to maximize your score.
+5. Enjoy the dynamic game with bonus time challenges and responsive audio-visual effects.
+6. When the game ends, click the restart button (🔄) to play again.
 
 ## Technical Details
 
-- **Emoji Spawning**: Dynamic intervals that decrease with score (800ms to 100ms)
-- **Audio System**: Web Audio API with dynamic frequency and volume control
-  - Spawn sounds: Sine wave with size-based frequency
-  - Good click sounds: Triangle wave with quick attack and smooth decay
-  - Bad click sounds: Sawtooth wave with lower frequency
-- **Animation**: CSS-based animations for movement and effects
-- **Particle System**: Creates 3-8 particle emojis that spread in a circular pattern
-- **Scoring Algorithm**: Points based on emoji size and movement speed
-- **Difficulty Progression**: Spawn rate increases with score
+- **Emoji Spawning**: 
+  - Spawn rate dynamically adjusts from approximately 800ms to 100ms based on your score.
+- **Audio System**:
+  - Spawn sounds: Sine wave with frequency based on emoji size.
+  - Click sounds: Triangle wave with quick attack and smooth decay.
+  - Bad click sounds: Sawtooth wave with a harsher tone.
+- **Animation & Particle System**:
+  - CSS-based animations control emoji movement.
+  - Particle effects are generated on emoji interactions, bursting in a circular pattern.
+- **Scoring & Difficulty**:
+  - Points calculated from emoji size and movement speed.
+  - Higher scores result in faster emoji spawn rates.
+- **Pause/Resume Functionality**:
+  - The game pauses automatically when the tab loses focus and resumes when active.
+- **YaGames SDK**:
+  - Integrated for game loading notifications, gameplay state updates, and leaderboard score submissions.
 
 ## Files
 
-- `index.html`: Main HTML file with game UI elements
-- `styles.css`: CSS file for styling and animations
-- `script.js`: JavaScript file containing game logic, scoring system, and audio
+- `index.html`: Main HTML file that sets up the game's UI and initializes the YaGames SDK.
+- `styles.css`: Contains styling and animation definitions.
+- `script.js`: Implements game logic, including scoring, audio effects, emoji spawning, and game state management.
