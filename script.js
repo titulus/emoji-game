@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Inform the platform that the game is loaded and ready to play.
+    if (window.ysdk) window.ysdk.features.LoadingAPI?.ready();
 
     const emojiContainer = document.querySelector('.emoji-container');
     const scoreElement = document.getElementById('score');
@@ -31,6 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.emoji').forEach(emoji => {
                 emoji.style.animationPlayState = 'paused';
             });
+    
+            // Inform SDK that game has paused
+            if (window.ysdk) window.ysdk.features.GameplayAPI?.stop();
         }
     }
 
@@ -44,6 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.emoji').forEach(emoji => {
                 emoji.style.animationPlayState = 'running';
             });
+            // Inform SDK that game has resumed
+            if (window.ysdk) window.ysdk.features.GameplayAPI?.start();
         }
     }
 
@@ -288,31 +295,36 @@ document.addEventListener('DOMContentLoaded', () => {
         timeLeft = 30;
         gameActive = true;
         emojiStats = {};
-
+    
         // Update UI
         updateScore(0);
         updateTimer();
         gameOverScreen.style.display = 'none';
-
+    
         // Start game loops
         countdownInterval = setInterval(updateTimer, 1000);
         scheduleNextEmoji();
+    
+        // Inform SDK that game has started
+        if (window.ysdk) window.ysdk.features.GameplayAPI?.start();
     }
 
     function endGame() {
         gameActive = false;
         clearInterval(countdownInterval);
-
+    
         // Clear all existing emojis
         const emojis = document.querySelectorAll('.emoji');
         emojis.forEach(emoji => emoji.remove());
-
+    
         // Show game over screen with stats
         finalScoreElement.textContent = score;
         gameOverScreen.style.display = 'flex';
-
-        // Submit score to leaderboard if available
+    
         if (window.ysdk) {
+            // Inform SDK that game has ended
+            window.ysdk.features.GameplayAPI?.stop();
+            // Submit score to leaderboard if available
             window.ysdk.isAvailableMethod('leaderboards.setLeaderboardScore')
                 .then(isAvailable => {
                     if (isAvailable) {
