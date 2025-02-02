@@ -142,19 +142,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 particle.innerText = burstEmojis[Math.floor(Math.random() * burstEmojis.length)];
             }
             particle.innerText = burstEmojis[Math.floor(Math.random() * burstEmojis.length)];
-
+            
             const angle = (Math.PI * 2 * i) / particleCount;
             const distance = 100;
             const tx = Math.cos(angle) * distance;
             const ty = Math.sin(angle) * distance;
-
+            
             particle.style.setProperty('--tx', `${tx}px`);
             particle.style.setProperty('--ty', `${ty}px`);
             particle.style.left = `${x}px`;
             particle.style.top = `${y}px`;
-
+            
             emojiContainer.appendChild(particle);
-
+            
             setTimeout(() => particle.remove(), 800);
         }
     }
@@ -212,8 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const duration = Math.random() * 5 + 3;
         emoji.style.animationDuration = `${duration}s`;
 
-        emoji.addEventListener('click', (e) => {
+        const handleEmojiInteraction = (e) => {
             if (!gameActive) return;
+            if (e.cancelable) {
+                e.preventDefault();
+            }
 
             initAudio(); // Initialize audio on first interaction
             const rect = emoji.getBoundingClientRect();
@@ -251,7 +254,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             setTimeout(() => emoji.remove(), 500);
-        });
+        };
+
+        emoji.addEventListener('mousedown', handleEmojiInteraction);
+        emoji.addEventListener('touchstart', handleEmojiInteraction, { passive: false });
 
         emojiContainer.appendChild(emoji);
 
@@ -338,8 +344,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event Listeners
-    restartButton.addEventListener('click', startGame);
-    soundToggleButton.addEventListener('click', toggleSound);
+    const handleRestartButton = (e) => {
+        if (e.cancelable) {
+            e.preventDefault();
+        }
+        startGame();
+    };
+    const handleSoundToggle = (e) => {
+        if (e.cancelable) {
+            e.preventDefault();
+        }
+        toggleSound();
+    };
+
+    restartButton.addEventListener('mousedown', handleRestartButton);
+    restartButton.addEventListener('touchstart', handleRestartButton);
+    soundToggleButton.addEventListener('mousedown', handleSoundToggle);
+    soundToggleButton.addEventListener('touchstart', handleSoundToggle);
 
     // Prevent selection and context menu on the entire document
     document.addEventListener('selectstart', (e) => {
