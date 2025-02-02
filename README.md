@@ -30,11 +30,12 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 ## How to Play
 
 1. Open `index.html` in your browser.
-2. Click or tap good emojis (🍋, 🍎, 🍊, 🍌, 🍉, 🍇, 🍓, 🥝, 🥭, 🍍, 🥑, 🍒) to earn points.
-3. Avoid bad emojis (💀, 🦠, 🤬, ☠️, 💩) which reduce your score and time.
-4. Aim for smaller and faster emojis to maximize your score.
-5. Enjoy the dynamic game with bonus time challenges and responsive audio-visual effects.
-6. When the game ends, click the restart button (🔄) to play again.
+2. Press the central start button (▶️) to start the game.
+3. Click or tap good emojis (🍋, 🍎, 🍊, 🍌, 🍉, 🍇, 🍓, 🥝, 🥭, 🍍, 🥑, 🍒) to earn points.
+4. Avoid bad emojis (💀, 🦠, 🤬, ☠️, 💩) which reduce your score and time.
+5. Aim for smaller and faster emojis to maximize your score.
+6. Enjoy the dynamic game with bonus time challenges and responsive audio-visual effects.
+7. When the game ends, press the restart button (🔄) to play again.
 
 ## Technical Details
 
