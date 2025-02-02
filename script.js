@@ -276,6 +276,19 @@ function createParticles(x, y, isBad = false) {
         // Show game over screen with stats
         finalScoreElement.textContent = score;
         gameOverScreen.style.display = 'flex';
+
+        // Submit score to leaderboard if available
+        if (window.ysdk) {
+            window.ysdk.isAvailableMethod('leaderboards.setLeaderboardScore')
+                .then(isAvailable => {
+                    if (isAvailable) {
+                        window.ysdk.setLeaderboardScore('leader', score)
+                            .then(() => console.log('Score submitted to leaderboard'))
+                            .catch(err => console.error('Error submitting score:', err));
+                    }
+                })
+                .catch(err => console.error('Error checking leaderboard availability:', err));
+        }
     }
 
     // Event Listeners
