@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameOverScreen = document.querySelector('.game-over');
     const finalScoreElement = document.getElementById('final-score');
     const restartButton = document.getElementById('restart-button');
+    const restartAdButton = document.getElementById('restart-ad-button');
     const soundToggleButton = document.getElementById('sound-toggle');
     const startScreen = document.getElementById('start-screen');
     const startButton = document.getElementById('start-button');
@@ -321,15 +322,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }, delay);
     }
 
-    function startGame() {
+    function startGame(config = {}) {
         // Reset game state
-        score = 0;
-        timeLeft = 30;
+        score = config.score !== undefined ? config.score : 0;
+        timeLeft = config.timeLeft !== undefined ? config.timeLeft : 30;
         gameActive = true;
         emojiStats = {};
-    
+
         // Update UI
-        updateScore(0);
+        updateScore(score);
         updateTimer();
         gameOverScreen.style.display = 'none';
     
@@ -337,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
         countdownInterval = setInterval(updateTimer, 1000);
         scheduleNextEmoji();
         emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100);
-        
+    
         // Inform SDK that game has started
         if (window.ysdk) window.ysdk.features.GameplayAPI?.start();
     }
@@ -406,6 +407,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.cancelable) e.preventDefault();
         startGame();
     });
+    const handleRestartAd = (e) => {
+        if (e.cancelable) e.preventDefault();
+        if (window.ysdk && window.ysdk.adv && typeof window.ysdk.adv.showRewardedVideo === 'function') {
+            window.ysdk.adv.showRewardedVideo({
+                callbacks: {
+                    onOpen: () => { console.debug('Video ad open.'); },
+                    onRewarded: () => { console.debug('Reward granted.'); startGame({ timeLeft: 60 }); },
+                    onClose: () => { console.debug('Video ad closed.'); },
+                    onError: (error) => { console.error('Error while opening video ad:', error); }
+                }
+            });
+        } else {
+            console.warn('Rewarded video ad not available.');
+        }
+    };
+    
+    restartAdButton.addEventListener('mousedown', handleRestartAd);
+    restartAdButton.addEventListener('touchstart', handleRestartAd, { passive: false });
     restartButton.addEventListener('touchstart', (e) => {
         if (e.cancelable) e.preventDefault();
         startGame();
