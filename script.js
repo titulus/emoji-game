@@ -214,8 +214,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const emoji = document.createElement('div');
         emoji.classList.add('emoji');
 
-        // 40% chance to spawn a bad emoji
-        const isBadEmoji = Math.random() < 0.4;
+        let badProbability;
+        if (score < 100) {
+            badProbability = 0.2;
+        } else if (score <= 1000) {
+            badProbability = 0.2 + ((score - 100) / 900) * 0.7;
+        } else {
+            badProbability = 0.9;
+        }
+        const isBadEmoji = Math.random() < badProbability;
         const selectedEmoji = isBadEmoji
             ? badEmojis[Math.floor(Math.random() * badEmojis.length)]
             : goodEmojis[Math.floor(Math.random() * goodEmojis.length)];
