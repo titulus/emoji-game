@@ -8,8 +8,11 @@
     <script src="/sdk.js"></script>
     <script>
         YaGames.init().then(ysdk => {
-            console.log('SDK initialized');
+            console.debug('SDK initialized');
             window.ysdk = ysdk;
+
+            ysdk.features.LoadingAPI?.ready();
+            console.debug('SDK ready');
         });
     </script>
 </head>

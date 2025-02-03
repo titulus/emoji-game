@@ -1,7 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Inform the platform that the game is loaded and ready to play.
-    if (window.ysdk) window.ysdk.features.LoadingAPI?.ready();
-
     const emojiContainer = document.querySelector('.emoji-container');
     const scoreElement = document.getElementById('score');
     const timerElement = document.getElementById('timer');
@@ -366,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(isAvailable => {
                     if (isAvailable) {
                         window.ysdk.setLeaderboardScore('leader', score)
-                            .then(() => console.log('Score submitted to leaderboard'))
+                            .then(() => console.debug('Score submitted to leaderboard'))
                             .catch(err => console.error('Error submitting score:', err));
                     }
                 })
