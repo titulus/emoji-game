@@ -1,63 +1,69 @@
-# Emoji Game
+# Browser Game Template with YSDK
 
-An interactive game where you catch good emojis and avoid bad ones to score points. Experience dynamic gameplay with responsive audio-visual effects, automatic pause/resume, and YaGames SDK integration for a seamless gaming experience.
+This template provides the essential framework for developing browser games with YaGames SDK integration on both desktop and mobile platforms. It includes the following core functionalities:
 
-## Game Features
+- **Game Launch**: Initialize the game with a start button that also activates the audio system.
+- **Score Display**: Shows the player's current score.
+- **Sound Control**: Toggle sound on and off during gameplay.
+- **Round Timer**: A countdown timer displays the remaining time for the current round.
+- **Pause/Resume**: Automatically pauses the game when the browser tab or window loses focus and resumes when focus is restored.
+- **Game Over Screen**: Displays a final screen at the end of the round with options to restart the game or restart with a rewarded ad.
+- **YaGames SDK Integration**: Provides a framework for YaGames SDK features such as gameplay state notifications and leaderboard score submissions.
 
-- **Score System**:
-  - Earn points by clicking on good emojis.
-  - Points range from 1 to 10, based on the emoji's size and speed (smaller and faster emojis yield higher scores).
-  - Hitting a high-scoring emoji awards bonus time.
-  - Avoid bad emojis (💀, 🦠, 🤬, ☠️, 💩) which decrease your score and remaining time.
-- **Time Limit**:
-  - Each round lasts 30 seconds.
-  - Bonus time is added for high-scoring hits.
-  - The game automatically ends when time runs out.
-- **Dynamic Spawning**:
-  - Emojis appear randomly from the bottom of the screen.
-  - Spawn intervals decrease as your score increases, increasing the game's difficulty.
-- **Size Variation & Interactive Effects**:
-  - Each emoji appears in a random size, affecting both its score and the associated sound effects.
-  - Clicking an emoji triggers a burst of particles and a corresponding sound effect.
-- **Audio Feedback**:
-  - Utilizes the Web Audio API for dynamic sound effects.
-  - Spawn sounds, click sounds, and distinct sounds for bad emojis enhance the gameplay experience.
-- **Automatic Pause/Resume**:
-  - The game automatically pauses when the browser tab loses focus or becomes hidden, and resumes upon reactivation.
-- **YaGames SDK Integration**:
-  - The game initializes the YaGames SDK on load for additional features such as gameplay tracking and leaderboard submissions.
-
-## How to Play
+## How to Use
 
 1. Open `index.html` in your browser.
-2. Press the central start button (▶️) to start the game.
-3. Click or tap good emojis (🍋, 🍎, 🍊, 🍌, 🍉, 🍇, 🍓, 🥝, 🥭, 🍍, 🥑, 🍒) to earn points.
-4. Avoid bad emojis (💀, 🦠, 🤬, ☠️, 💩) which reduce your score and time.
-5. Aim for smaller and faster emojis to maximize your score.
-6. Enjoy the dynamic game with bonus time challenges and responsive audio-visual effects.
-7. When the game ends, press the restart button (🔄) to play again.
+2. Press the start button to begin the game. This initializes the audio system and starts the round.
+3. The template handles pausing/resuming automatically based on window focus.
+4. After the round ends, use the provided buttons to restart the game or watch a rewarded ad for extra time.
 
 ## Technical Details
 
-- **Emoji Spawning**: 
-  - Spawn rate dynamically adjusts from approximately 800ms to 100ms based on your score.
-- **Audio System**:
-  - Spawn sounds: Sine wave with frequency based on emoji size.
-  - Click sounds: Triangle wave with quick attack and smooth decay.
-  - Bad click sounds: Sawtooth wave with a harsher tone.
-- **Animation & Particle System**:
-  - CSS-based animations control emoji movement.
-  - Particle effects are generated on emoji interactions, bursting in a circular pattern.
-- **Scoring & Difficulty**:
-  - Points calculated from emoji size and movement speed.
-  - Higher scores result in faster emoji spawn rates.
-- **Pause/Resume Functionality**:
-  - The game pauses automatically when the tab loses focus and resumes when active.
-- **YaGames SDK**:
-  - Integrated for game loading notifications, gameplay state updates, and leaderboard score submissions.
+- The template sets up the essential UI elements and event listeners.
+- Core functionalities such as score updating, timer countdown, audio system initialization, and YaGames SDK integration are implemented in `script.js`.
+- Developers should implement custom gameplay logic by extending this template.
 
 ## Files
 
-- `index.html`: Main HTML file that sets up the game's UI and initializes the YaGames SDK.
-- `styles.css`: Contains styling and animation definitions.
-- `script.js`: Implements game logic, including scoring, audio effects, emoji spawning, and game state management.
+- `index.html`: Sets up the UI and initializes YaGames SDK.
+- `styles.css`: Contains styling for the UI and animations.
+- `script.js`: Contains the core functionality for game launch, score, timer, pause/resume, and game over handling.
+
+## Codestyle and Architecture Recommendations
+
+### Codestyle
+
+1. **Consistent Naming Conventions**:
+   - Use camelCase for variable and function names.
+   - Use PascalCase for class names.
+   - Use UPPER_CASE for constants.
+
+2. **Indentation**:
+   - Use 4 spaces for indentation.
+   - Ensure consistent indentation throughout the file.
+
+3. **Spacing**:
+   - Use spaces around operators and after commas.
+   - Avoid unnecessary spaces.
+
+4. **Line Length**:
+   - Keep lines within 80-120 characters to improve readability.
+
+5. **Comments**:
+   - Use comments to explain complex logic or non-obvious code.
+   - Avoid redundant comments.
+
+6. **Modularization**:
+   - Break down the code into smaller, reusable modules.
+
+7. **Consistent Formatting**:
+   - Use a consistent formatting style throughout the file.
+   - Use consistent spacing and indentation.
+   - Use consistent naming conventions.
+   - Before creating new piece of code - check how the similar code is already written in the project and match the style.
+
+8. **Partial updates**:
+   - Avoid making large changes to the codebase at once.
+   - Instead, make smaller, incremental changes.
+   - Do not modify (e.g. remove, rename) any existing code (including comments) that is not related to the feature you are working on.
+   - Do not remove or add empty lines in the already written code, not related to the feature you are working on.

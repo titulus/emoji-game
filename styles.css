@@ -10,10 +10,10 @@ button#sound-toggle {
 button#sound-toggle:hover {
     transform: scale(1.2);
 }
+
 body {
     margin: 0;
     overflow: hidden;
-    overflow-x: hidden;
     width: 100vw;
     max-width: 100vw;
     background-color: #f0f0f0;
@@ -48,21 +48,6 @@ body {
     gap: 8px;
 }
 
-.emoji-container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-}
-
-.emoji {
-    position: absolute;
-    font-size: 2rem;
-    animation: fly 5s linear infinite;
-    cursor: pointer;
-    user-select: none;
-}
-
 .game-over {
     position: fixed;
     top: 0;
@@ -86,30 +71,6 @@ body {
     animation: fadeInUp 0.5s ease-out;
 }
 
-.game-over h1 {
-    margin: 0 0 30px 0;
-    font-size: 2.5rem;
-    font-weight: normal;
-}
-
-.emoji-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin: 20px 0;
-    font-size: 1.2rem;
-}
-
-.emoji-stat {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    background: #f5f5f5;
-    padding: 8px;
-    border-radius: 12px;
-}
-
 .final-score {
     font-size: 2rem;
     margin: 20px 0;
@@ -131,6 +92,7 @@ body {
     margin-top: 20px;
     margin-right: 10px;
 }
+
 #restart-ad-button {
     background: linear-gradient(135deg, #00c6ff, #0072ff);
     border: none;
@@ -143,100 +105,17 @@ body {
     margin-top: 20px;
     margin-right: 10px;
 }
+
 #restart-button:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
+
 #restart-ad-button:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
-#restart-ad-button {
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
-}
-#restart-ad-button:hover {
-    background: linear-gradient(135deg, #0072ff, #00c6ff);
-}
-#restart-ad-button {
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
-}
 
-@keyframes fly {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-        transform: translate(0, -100vh) rotate(360deg);
-    }
-}
-
-.burst {
-    animation: burst 0.5s ease-out forwards;
-}
-
-@keyframes burst {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.5);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(0);
-        opacity: 0;
-    }
-}
-
-.bad-emoji {
-    color: #ff3333;
-    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-    animation: fly 5s linear infinite;
-}
-
-.burst-bad {
-    animation: burstBad 0.5s ease-out forwards;
-}
-
-@keyframes burstBad {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(2);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(0);
-        opacity: 0;
-    }
-}
-
-.particle {
-    position: absolute;
-    pointer-events: none;
-    animation: particle 0.8s ease-out forwards;
-}
-
-.bad-particle {
-    color: #ff3333;
-    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-}
-
-@keyframes particle {
-    0% {
-        transform: scale(0.5) translate(0, 0);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(1.5) translate(var(--tx), var(--ty));
-        opacity: 0;
-    }
-}
- 
 /* Start Screen Styling */
 .start-screen {
     position: fixed;
@@ -250,6 +129,7 @@ body {
     z-index: 2000;
     background: rgba(0, 0, 0, 0.5);
 }
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -270,9 +150,11 @@ body {
     transition: transform 0.2s;
     color: white;
 }
+
 #start-button:hover {
     transform: scale(1.2);
 }
+
 @keyframes slideDown {
     from {
         opacity: 0;

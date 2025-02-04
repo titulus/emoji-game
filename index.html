@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emoji Game</title>
+    <title>Browser Game Template</title>
     <link rel="stylesheet" href="styles.css">
     <script src="/sdk.js"></script>
     <script>
         YaGames.init().then(ysdk => {
             console.debug('SDK initialized');
             window.ysdk = ysdk;
-
             ysdk.features.LoadingAPI?.ready();
             console.debug('SDK ready');
         });
@@ -24,14 +23,12 @@
             <div class="timer">⏰ <span id="timer"></span></div>
         </div>
     </div>
-    <div class="emoji-container"></div>
     <div id="start-screen" class="start-screen">
         <button id="start-button">▶️</button>
     </div>
     <div class="game-over" style="display: none;">
         <div class="game-over-content">
             <div class="final-score">🏆 <span id="final-score">0</span></div>
-            <div id="emoji-stats"></div>
             <button id="restart-button">🔄 ⏰ 30</button>
             <button id="restart-ad-button">📺 ⏰ 60</button>
         </div>
