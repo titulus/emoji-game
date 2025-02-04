@@ -61,3 +61,42 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 - `index.html`: Main HTML file that sets up the game's UI and initializes the YaGames SDK.
 - `styles.css`: Contains styling and animation definitions.
 - `script.js`: Implements game logic, including scoring, audio effects, emoji spawning, and game state management.
+
+## Codestyle and Architecture Recommendations
+
+### Codestyle
+
+1. **Consistent Naming Conventions**:
+   - Use camelCase for variable and function names.
+   - Use PascalCase for class names.
+   - Use UPPER_CASE for constants.
+
+2. **Indentation**:
+   - Use 4 spaces for indentation.
+   - Ensure consistent indentation throughout the file.
+
+3. **Spacing**:
+   - Use spaces around operators and after commas.
+   - Avoid unnecessary spaces.
+
+4. **Line Length**:
+   - Keep lines within 80-120 characters to improve readability.
+
+5. **Comments**:
+   - Use comments to explain complex logic or non-obvious code.
+   - Avoid redundant comments.
+
+6. **Modularization**:
+   - Break down the code into smaller, reusable modules.
+
+7. **Consistent Formatting**:
+   - Use a consistent formatting style throughout the file.
+   - Use consistent spacing and indentation.
+   - Use consistent naming conventions.
+   - Before creating new piece of code - check how the similar code is already written in the project and match the style.
+
+8. **Partial updates**:
+   - Avoid making large changes to the codebase at once.
+   - Instead, make smaller, incremental changes.
+   - Do not modify (e.g. remove, rename) any existing code (including comments) that is not related to the feature you are working on.
+   - Do not remove or add empty lines in the already written code, not related to the feature you are working on.
