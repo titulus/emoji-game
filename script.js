@@ -236,11 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 createParticles(rect.left, rect.top, true);
                 emoji.classList.add('burst-bad');
 
-                // Decrease score and time
+                // Decrease score
                 updateScore(-1);
-
-                // Update emoji stats
-                emojiStats[selectedEmoji] = (emojiStats[selectedEmoji] || 0) + 1;
             } else {
                 playClickSound();
                 createParticles(rect.left, rect.top, false);
@@ -252,9 +249,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sizeScore = (3 - size) / 2; // 0 to 1
                 const speedScore = (8 - duration) / 5; // 0 to 1
                 const points = Math.max(1, Math.min(10, Math.ceil((sizeScore + speedScore) * 7)));
-                emojiStats[selectedEmoji] = (emojiStats[selectedEmoji] || 0) + 1;
+                
                 updateScore(points);
             }
+
+            // Update emoji stats
+            emojiStats[selectedEmoji] = (emojiStats[selectedEmoji] || 0) + 1;
+
             // Update removal timing to 500ms from now upon interaction
             if (isPaused) {
                 emoji.removalRemaining = 500;
