@@ -20,14 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let emojiStats = {};
     let soundEnabled = true;
     let isPaused = false;
-    let pauseStartTime;
 
     function pauseGame() {
         if (!isPaused && gameActive) {
             isPaused = true;
             gameActive = false;
             clearInterval(emojiRemovalIntervalID);
-            pauseStartTime = Date.now();
             // Pause all emoji animations and freeze their removal timers
             document.querySelectorAll('.emoji').forEach(emoji => {
                 emoji.style.animationPlayState = 'paused';
