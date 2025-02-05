@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const emojiContainer = document.querySelector('.emoji-container');
     const scoreElement = document.getElementById('score');
-    const timerElement = document.getElementById('timer');
     const gameOverScreen = document.querySelector('.game-over');
     const finalScoreElement = document.getElementById('final-score');
     const restartButton = document.getElementById('restart-button');
@@ -16,9 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let audioContext;
     let score = 0;
-    let timeLeft = 30;
     let gameActive = false;
-    let countdownInterval;
     let emojiRemovalIntervalID;
     let emojiStats = {};
     let soundEnabled = true;
@@ -29,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isPaused && gameActive) {
             isPaused = true;
             gameActive = false;
-            clearInterval(countdownInterval);
             clearInterval(emojiRemovalIntervalID);
             pauseStartTime = Date.now();
             // Pause all emoji animations and freeze their removal timers
@@ -59,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     delete emoji.removalRemaining;
                 }
             });
-            countdownInterval = setInterval(updateTimer, 1000);
             emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100);
             scheduleNextEmoji();
             if (window.ysdk) window.ysdk.features.GameplayAPI?.start();
@@ -176,22 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
             score = 0;
         }
         scoreElement.textContent = score;
-
-        // Add bonus time for high-scoring hits (points > 7)
-        if (points > 7) {
-            const bonusTime = points - 7;
-            timeLeft += bonusTime;
-            timerElement.textContent = timeLeft;
-        }
-    }
-
-    function updateTimer() {
-        timerElement.textContent = timeLeft;
-        if (timeLeft <= 0) {
-            endGame();
-        } else {
-            timeLeft--;
-        }
     }
 
     // Global checker for auto-removal of emojis using removalTarget timestamps
@@ -261,8 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Decrease score and time
                 updateScore(-1);
-                timeLeft = Math.max(1, timeLeft - 1); // Prevent time from going below 1
-                timerElement.textContent = timeLeft;
 
                 // Update emoji stats
                 emojiStats[selectedEmoji] = (emojiStats[selectedEmoji] || 0) + 1;
@@ -325,17 +302,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function startGame(config = {}) {
         // Reset game state
         score = config.score !== undefined ? config.score : 0;
-        timeLeft = config.timeLeft !== undefined ? config.timeLeft : 30;
         gameActive = true;
         emojiStats = {};
 
         // Update UI
         updateScore(score);
-        updateTimer();
         gameOverScreen.style.display = 'none';
     
         // Start game loops
-        countdownInterval = setInterval(updateTimer, 1000);
         scheduleNextEmoji();
         emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100);
     
@@ -345,7 +319,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function endGame() {
         gameActive = false;
-        clearInterval(countdownInterval);
         clearInterval(emojiRemovalIntervalID);
 
         // Clear all existing emojis
@@ -406,14 +379,19 @@ document.addEventListener('DOMContentLoaded', () => {
     restartButton.addEventListener('mousedown', (e) => {
         if (e.cancelable) e.preventDefault();
         startGame();
-    });
+    });;
+    restartButton.addEventListener('touchstart', (e) => {
+        if (e.cancelable) e.preventDefault();
+        startGame();
+    }, { passive: false });
+    
     const handleRestartAd = (e) => {
         if (e.cancelable) e.preventDefault();
         if (window.ysdk && window.ysdk.adv && typeof window.ysdk.adv.showRewardedVideo === 'function') {
             window.ysdk.adv.showRewardedVideo({
                 callbacks: {
                     onOpen: () => { console.debug('Video ad open.'); },
-                    onRewarded: () => { console.debug('Reward granted.'); startGame({ timeLeft: 60 }); },
+                    onRewarded: () => { console.debug('Reward granted.'); startGame(); },
                     onClose: () => { console.debug('Video ad closed.'); },
                     onError: (error) => { console.error('Error while opening video ad:', error); }
                 }
@@ -425,10 +403,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     restartAdButton.addEventListener('mousedown', handleRestartAd);
     restartAdButton.addEventListener('touchstart', handleRestartAd, { passive: false });
-    restartButton.addEventListener('touchstart', (e) => {
-        if (e.cancelable) e.preventDefault();
-        startGame();
-    });
     soundToggleButton.addEventListener('mousedown', (e) => {
         if (e.cancelable) e.preventDefault();
         toggleSound();
@@ -436,5 +410,5 @@ document.addEventListener('DOMContentLoaded', () => {
     soundToggleButton.addEventListener('touchstart', (e) => {
         if (e.cancelable) e.preventDefault();
         toggleSound();
-    });
+    }, { passive: false });
 });
