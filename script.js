@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // DOM elements
     const emojiContainer = document.querySelector('.emoji-container');
     const scoreElement = document.getElementById('score');
     const gameOverScreen = document.querySelector('.game-over');
@@ -8,11 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const soundToggleButton = document.getElementById('sound-toggle');
     const startScreen = document.getElementById('start-screen');
     const startButton = document.getElementById('start-button');
+    const progressBar = document.getElementById('progress-bar');
 
     const goodEmojis = ['🍋', '🍎', '🍊', '🍌', '🍉', '🍇', '🍓', '🥝', '🥭', '🍍', '🥑', '🍒'];
     const badEmojis = ['💀', '🦠', '🤬', '☠️', '💩'];
     const burstEmojis = ['🌟', '✨', '💥', '⭐', '🕸️', '🔅', '🔆'];
 
+    // Game variables
     let audioContext;
     let score = 0;
     let gameActive = false;
@@ -20,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let emojiStats = {};
     let soundEnabled = true;
     let isPaused = false;
+    let progressBarValue = 0;
+    let progressIntervalID;
 
     function pauseGame() {
         if (!isPaused && gameActive) {
@@ -171,6 +176,27 @@ document.addEventListener('DOMContentLoaded', () => {
         scoreElement.textContent = score;
     }
 
+    function updateProgressBar() {
+        if (progressBar) {
+            progressBar.style.width = progressBarValue + '%';
+        }
+    }
+
+    function incrementProgress(value = 1) {
+        progressBarValue = Math.min(progressBarValue + value, 100);
+        updateProgressBar();
+    }
+
+    function decrementProgress(value = 1) {
+        progressBarValue = Math.max(progressBarValue - value, 0);
+        updateProgressBar();
+    }
+
+    function resetProgress() {
+        progressBarValue = 0;
+        updateProgressBar();
+    }
+
     // Global checker for auto-removal of emojis using removalTarget timestamps
     function checkEmojiRemovals() {
         // Only check removals when not paused
@@ -236,8 +262,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 createParticles(rect.left, rect.top, true);
                 emoji.classList.add('burst-bad');
 
+                const points = 10;
+
                 // Decrease score
-                updateScore(-1);
+                updateScore(-points);
+                decrementProgress(points);
             } else {
                 playClickSound();
                 createParticles(rect.left, rect.top, false);
@@ -251,6 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const points = Math.max(1, Math.min(10, Math.ceil((sizeScore + speedScore) * 7)));
                 
                 updateScore(points);
+                incrementProgress(points);
             }
 
             // Update emoji stats
@@ -307,7 +337,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update UI
         updateScore(score);
         gameOverScreen.style.display = 'none';
-    
+        resetProgress();
+        if (progressIntervalID) {
+            clearInterval(progressIntervalID);
+        }
+        progressIntervalID = setInterval(() => {
+            decrementProgress();
+        }, 1000);
+        
         // Start game loops
         scheduleNextEmoji();
         emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100);
