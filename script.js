@@ -14,6 +14,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextEmojiElement = document.getElementById('next-emoji');
 
     const goodEmojis = ['🍎', '🍏', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍈', '🍑', '🍒', '🍍', '🥭', '🥝', '🥑', '🥥', '🍓'];
+    const emojiMultipliers = {
+        '🍎': 1,
+        '🍏': 1,
+        '🍐': 2,
+        '🍊': 3,
+        '🍋': 5,
+        '🍌': 8,
+        '🍉': 13,
+        '🍇': 21,
+        '🍈': 34,
+        '🍑': 55,
+        '🍒': 89,
+        '🍍': 144,
+        '🥭': 233,
+        '🥝': 377,
+        '🥑': 610,
+        '🥥': 987,
+        '🍓': 1597
+    };
     const badEmojis = ['💀', '☠️', '💩'];
     const particles = ['🌟', '✨', '⭐', '🔅', '🔆'];
 
@@ -241,7 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function incrementProgress(value = 1) {
-        progressBarValue = Math.min(progressBarValue + value, 100);
+        const currentEmojiCost = emojiMultipliers[goodEmojis[level - 1]] || 1;
+        const adjustedValue = value / currentEmojiCost;
+        progressBarValue = Math.min(progressBarValue + adjustedValue, 100);
         updateProgressBar();
         if (progressBarValue === 100) {
             level++;
@@ -341,7 +362,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // duration range: 3-8 (shorter = better)
                 const sizeScore = (3 - size) / 2; // 0 to 1
                 const speedScore = (8 - duration) / 5; // 0 to 1
-                const points = Math.max(1, Math.min(10, Math.ceil((sizeScore + speedScore) * 7)));
+                const multiplier = emojiMultipliers[selectedEmoji] || 1;
+                const points = Math.max(1, Math.min(10, Math.ceil((sizeScore + speedScore) * 7))) * multiplier;
                 
                 updateScore(points);
                 incrementProgress(points);
