@@ -372,13 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update emoji stats
             emojiStats[selectedEmoji] = (emojiStats[selectedEmoji] || 0) + 1;
 
-            // Update removal timing to 500ms from now upon interaction
-            if (isPaused) {
-                emoji.removalRemaining = 500;
-                delete emoji.removalTarget;
-            } else {
-                emoji.removalTarget = Date.now() + 500;
-            }
+            emoji.removalTarget = Date.now() + 500;
         };
 
         emoji.addEventListener('mousedown', handleEmojiInteraction);
