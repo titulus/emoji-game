@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startButton = document.getElementById('start-button');
     const progressBar = document.getElementById('progress-bar');
 
-    const goodEmojis = ['🍎', '🍏', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍈', '🍑', '🍒', '🍍', '🥭', '🥝', '🥑', '🥥'];
+    const goodEmojis = ['🍎', '🍏', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍈', '🍑', '🍒', '🍍', '🥭', '🥝', '🥑', '🥥', '🍓'];
     const badEmojis = ['💀', '☠️', '💩'];
     const particles = ['🌟', '✨', '⭐', '🔅', '🔆'];
 
@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isPaused = false;
     let progressBarValue = 0;
     let progressIntervalID;
+    let level = 1;
 
     function pauseGame() {
         if (!isPaused && gameActive) {
@@ -184,6 +185,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function incrementProgress(value = 1) {
         progressBarValue = Math.min(progressBarValue + value, 100);
         updateProgressBar();
+        if (progressBarValue === 100) {
+            level++;
+            resetProgress();
+        }
     }
     function decrementProgress(value = 1) {
         progressBarValue = Math.max(progressBarValue - value, 0);
@@ -221,9 +226,13 @@ document.addEventListener('DOMContentLoaded', () => {
             badProbability = 0.9;
         }
         const isBadEmoji = Math.random() < badProbability;
-        const selectedEmoji = isBadEmoji
-            ? badEmojis[Math.floor(Math.random() * badEmojis.length)]
-            : goodEmojis[Math.floor(Math.random() * goodEmojis.length)];
+        let selectedEmoji;
+        if (isBadEmoji) {
+            selectedEmoji = badEmojis[Math.floor(Math.random() * badEmojis.length)];
+        } else {
+            const availableGoodEmojis = goodEmojis.slice(0, Math.min(level, goodEmojis.length));
+            selectedEmoji = availableGoodEmojis[Math.floor(Math.random() * availableGoodEmojis.length)];
+        }
 
         emoji.innerText = selectedEmoji;
         if (isBadEmoji) {
