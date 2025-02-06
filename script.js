@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateProgressBar();
             if (progressBarValue === 100) {
                 level++;
-                resetProgress();
+                resetProgress(10);
                 updateLevelEmojis();
                 showLevelTransition();
             }
@@ -325,8 +325,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         updateProgressBar();
     }
-    function resetProgress() {
-        progressBarValue = 0;
+    function resetProgress(value = 0) {
+        progressBarValue = value;
         updateProgressBar();
     }
 
