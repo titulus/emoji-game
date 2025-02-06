@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('blur', pauseGame);
     window.addEventListener('focus', resumeGame);
 
-    // Remove automatic start, instead wait for start button click
+    // Handle start button click or tap
     const handleStartButton = (e) => {
         if (e.cancelable) e.preventDefault();
         initAudio(); // Initialize audio on first interaction
@@ -410,16 +410,16 @@ document.addEventListener('DOMContentLoaded', () => {
     startButton.addEventListener('mousedown', handleStartButton);
     startButton.addEventListener('touchstart', handleStartButton, { passive: false });
 
-    restartButton.addEventListener('mousedown', (e) => {
+    // Handle restart button click or tap
+    const handleRestartButton = (e) => {
         if (e.cancelable) e.preventDefault();
         startGame();
-    });;
-    restartButton.addEventListener('touchstart', (e) => {
-        if (e.cancelable) e.preventDefault();
-        startGame();
-    }, { passive: false });
+    };
+    restartButton.addEventListener('mousedown', handleRestartButton);;
+    restartButton.addEventListener('touchstart', handleRestartButton, { passive: false });
     
-    const handleRestartAd = (e) => {
+    // Handle restart with ad button click or tap
+    const handleRestartAdButton = (e) => {
         if (e.cancelable) e.preventDefault();
         if (window.ysdk && window.ysdk.adv && typeof window.ysdk.adv.showRewardedVideo === 'function') {
             window.ysdk.adv.showRewardedVideo({
@@ -434,15 +434,14 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn('Rewarded video ad not available.');
         }
     };
-    
-    restartAdButton.addEventListener('mousedown', handleRestartAd);
-    restartAdButton.addEventListener('touchstart', handleRestartAd, { passive: false });
-    soundToggleButton.addEventListener('mousedown', (e) => {
+    restartAdButton.addEventListener('mousedown', handleRestartAdButton);
+    restartAdButton.addEventListener('touchstart', handleRestartAdButton, { passive: false });
+
+    // Handle sound toggle button click or tap
+    const handleSoundButton = (e) => {
         if (e.cancelable) e.preventDefault();
         toggleSound();
-    });
-    soundToggleButton.addEventListener('touchstart', (e) => {
-        if (e.cancelable) e.preventDefault();
-        toggleSound();
-    }, { passive: false });
+    };
+    soundToggleButton.addEventListener('mousedown', handleSoundButton);
+    soundToggleButton.addEventListener('touchstart', handleSoundButton, { passive: false });
 });
