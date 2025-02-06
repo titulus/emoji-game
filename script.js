@@ -295,7 +295,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (level >= goodEmojis.length) {
             progressBarValue = 100;
         } else {
+            const previousProgress = progressBarValue;
             progressBarValue = Math.max(progressBarValue - value, 0);
+            if (previousProgress > 0 && progressBarValue === 0) {
+                endGame();
+            }
         }
         updateProgressBar();
     }
@@ -437,8 +441,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset game state
         score = config.score !== undefined ? config.score : 0;
         gameActive = true;
-        emojiStats = {};
-
+        emojiStats = config.emojiStats !== undefined ? config.emojiStats : {};
+        level = config.level !== undefined ? config.level : 1;
+        progressBarValue = config.progressBarValue !== undefined ? config.progressBarValue : 0;
+    
         // Update UI
         updateScore(score);
         gameOverScreen.style.display = 'none';
@@ -449,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
         progressIntervalID = setInterval(() => {
             decrementProgress();
         }, 1000);
-        
+    
         updateLevelEmojis();
         // Start game loops
         scheduleNextEmoji();
