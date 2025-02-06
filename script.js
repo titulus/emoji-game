@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isPaused = true;
             gameActive = false;
             clearInterval(emojiRemovalIntervalID);
+            clearInterval(progressIntervalID); // Clear progress interval
             // Pause all emoji animations and freeze their removal timers
             document.querySelectorAll('.emoji').forEach(emoji => {
                 emoji.style.animationPlayState = 'paused';
@@ -94,6 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100);
+            progressIntervalID = setInterval(() => {
+                decrementProgress();
+            }, 1000); // Restart progress interval
             scheduleNextEmoji();
             if (window.ysdk) window.ysdk.features.GameplayAPI?.start();
         }
