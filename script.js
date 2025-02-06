@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateScore(points) {
+    function updateScore(points = 0) {
         score += points;
         if (score < 0) {
             score = 0;
@@ -446,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
         progressBarValue = config.progressBarValue !== undefined ? config.progressBarValue : 0;
     
         // Update UI
-        updateScore(score);
+        updateScore();
         gameOverScreen.style.display = 'none';
         resetProgress();
         if (progressIntervalID) {
@@ -539,13 +539,17 @@ document.addEventListener('DOMContentLoaded', () => {
             window.ysdk.adv.showRewardedVideo({
                 callbacks: {
                     onOpen: () => { console.debug('Video ad open.'); },
-                    onRewarded: () => { console.debug('Reward granted.'); startGame(); },
+                    onRewarded: () => {
+                        console.debug('Reward granted.');
+                        startGame({ score, level, progressBarValue, emojiStats});
+                    },
                     onClose: () => { console.debug('Video ad closed.'); },
                     onError: (error) => { console.error('Error while opening video ad:', error); }
                 }
             });
         } else {
             console.warn('Rewarded video ad not available.');
+            startGame({ score, level, progressBarValue, emojiStats});
         }
     };
     restartAdButton.addEventListener('mousedown', handleRestartAdButton);
