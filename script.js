@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const startButton = document.getElementById('start-button');
     const progressBar = document.getElementById('progress-bar');
 
-    const goodEmojis = ['🍋', '🍎', '🍊', '🍌', '🍉', '🍇', '🍓', '🥝', '🥭', '🍍', '🥑', '🍒'];
-    const badEmojis = ['💀', '🦠', '🤬', '☠️', '💩'];
-    const burstEmojis = ['🌟', '✨', '💥', '⭐', '🕸️', '🔅', '🔆'];
+    const goodEmojis = ['🍎', '🍏', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍈', '🍑', '🍒', '🍍', '🥭', '🥝', '🥑', '🥥'];
+    const badEmojis = ['💀', '☠️', '💩'];
+    const particles = ['🌟', '✨', '⭐', '🔅', '🔆'];
 
     // Game variables
     let audioContext;
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 particle.classList.add('bad-particle');
                 particle.innerText = '❌';
             } else {
-                particle.innerText = burstEmojis[Math.floor(Math.random() * burstEmojis.length)];
+                particle.innerText = particles[Math.floor(Math.random() * particles.length)];
             }
             
             const angle = (Math.PI * 2 * i) / particleCount;
@@ -181,17 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
             progressBar.style.width = progressBarValue + '%';
         }
     }
-
     function incrementProgress(value = 1) {
         progressBarValue = Math.min(progressBarValue + value, 100);
         updateProgressBar();
     }
-
     function decrementProgress(value = 1) {
         progressBarValue = Math.max(progressBarValue - value, 0);
         updateProgressBar();
     }
-
     function resetProgress() {
         progressBarValue = 0;
         updateProgressBar();
