@@ -197,6 +197,23 @@ document.addEventListener('DOMContentLoaded', () => {
             progressBar.style.width = progressBarValue + '%';
         }
     }
+    function showLevelTransition() {
+        const transitionContainer = document.createElement('div');
+        transitionContainer.classList.add('level-transition');
+    
+        const largeEmoji = document.createElement('div');
+        largeEmoji.classList.add('large-emoji');
+        largeEmoji.innerText = goodEmojis[level - 1];
+    
+        transitionContainer.appendChild(largeEmoji);
+    
+        document.body.appendChild(transitionContainer);
+    
+        setTimeout(() => {
+            transitionContainer.remove();
+        }, 1000);
+    }
+    
     function incrementProgress(value = 1) {
         progressBarValue = Math.min(progressBarValue + value, 100);
         updateProgressBar();
@@ -204,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
             level++;
             resetProgress();
             updateLevelEmojis();
+            showLevelTransition();
         }
     }
     function decrementProgress(value = 1) {
