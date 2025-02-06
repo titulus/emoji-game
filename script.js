@@ -357,9 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             }
 
-            const badProbability = score < 100 ? 0.2 :
-                                   score <= 1000 ? 0.2 + ((score - 100) / 900) * 0.3 :
-                                   0.5;
+            const badProbability = 0.1 + (level - 1) * (0.5 / (goodEmojis.length - 1));
 
             if (Math.random() < badProbability) {
                 return {
