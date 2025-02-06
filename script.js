@@ -209,9 +209,35 @@ document.addEventListener('DOMContentLoaded', () => {
     
         document.body.appendChild(transitionContainer);
     
+        const rect = largeEmoji.getBoundingClientRect();
+        createLevelParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, goodEmojis[level - 1]);
+    
         setTimeout(() => {
             transitionContainer.remove();
         }, 1000);
+    }
+    
+    function createLevelParticles(x, y, emoji) {
+        const particleCount = 20; // Increase the number of particles
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.innerText = emoji;
+    
+            const angle = (Math.PI * 2 * i) / particleCount;
+            const distance = 200; // Increase the distance for further flight
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance;
+    
+            particle.style.setProperty('--tx', `${tx}px`);
+            particle.style.setProperty('--ty', `${ty}px`);
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+    
+            emojiContainer.appendChild(particle);
+    
+            setTimeout(() => particle.remove(), 1500); // Increase the duration for further flight
+        }
     }
     
     function incrementProgress(value = 1) {
