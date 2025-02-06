@@ -197,25 +197,6 @@ button#sound-toggle:hover {
     }
 }
 
-.burst {
-    animation: burst 0.5s ease-out forwards;
-}
-
-@keyframes burst {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.5);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(0);
-        opacity: 0;
-    }
-}
-
 .bad-emoji {
     color: #ff3333;
     text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
@@ -226,25 +207,6 @@ button#sound-toggle:hover {
     color: #00ff00;
     text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
     animation: fly 5s linear infinite;
-}
-
-.burst-bad {
-    animation: burstBad 0.5s ease-out forwards;
-}
-
-@keyframes burstBad {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(2);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(0);
-        opacity: 0;
-    }
 }
 
 .particle {

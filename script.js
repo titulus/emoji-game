@@ -405,15 +405,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.cancelable) {
                 e.preventDefault();
             }
-        
+
             const rect = emoji.getBoundingClientRect();
-        
+
             if (emoji.classList.contains('bad-emoji')) {
                 playBadClickSound();
                 // Negative effects for bad emojis
                 createParticles(rect.left, rect.top, true);
-                emoji.classList.add('burst-bad');
-        
+
                 // Decrease score and progressbar
                 updateScore(-Math.round(score * 0.1));
                 decrementProgress(progressBarValue * 0.5);
@@ -422,19 +421,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Add bonus emoji styling
                 createParticles(rect.left, rect.top, false);
                 emoji.remove();
-        
+
                 // Bonus emoji logic: explode all bad emojis without affecting score, level, or progress
                 document.querySelectorAll('.bad-emoji').forEach(badEmoji => {
                     const rectBad = badEmoji.getBoundingClientRect();
                     createParticles(rectBad.left, rectBad.top, true);
-                    badEmoji.classList.add('burst-bad');
                     badEmoji.remove();
                 });
             } else {
                 playClickSound();
                 createParticles(rect.left, rect.top, false);
-                emoji.classList.add('burst');
-        
+
                 // Calculate points (1-10) based on size and speed
                 // size range: 1-3 (smaller = better)
                 // duration range: 3-8 (shorter = better)
@@ -442,15 +439,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const speedScore = (8 - duration) / 5; // 0 to 1
                 const multiplier = emojiMultipliers[selectedEmoji] || 1;
                 const points = Math.max(1, Math.min(10, Math.ceil((sizeScore + speedScore) * 7))) * multiplier;
-        
+
                 updateScore(points);
                 incrementProgress(points);
             }
-        
+
             // Update emoji stats
             emojiStats[selectedEmoji] = (emojiStats[selectedEmoji] || 0) + 1;
-        
-            emoji.removalTarget = Date.now() + 500;
+
+            emoji.remove();
         };
 
         emoji.addEventListener('mousedown', handleEmojiInteraction);
