@@ -89,9 +89,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // For each emoji, restart removal timers with the remaining time
             document.querySelectorAll('.emoji').forEach(emoji => {
                 emoji.style.animationPlayState = 'running';
-                if (emoji.removalRemaining) {
-                    emoji.removalTarget = Date.now() + emoji.removalRemaining;
-                    delete emoji.removalRemaining;
+                const duration = parseFloat(emoji.dataset.duration);
+                if (duration) {
+                    const fullDurationMs = duration * 1000;
+                    const currentTop = emoji.getBoundingClientRect().top;
+                    const remainingTime = (currentTop / window.innerHeight) * fullDurationMs;
+                    emoji.removalTarget = Date.now() + remainingTime;
                 }
             });
             emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100);
@@ -334,8 +337,9 @@ document.addEventListener('DOMContentLoaded', () => {
         emoji.style.top = `${y}px`;
 
         const duration = Math.random() * 5 + 3;
+        emoji.dataset.duration = duration;
         emoji.style.animationDuration = `${duration}s`;
-
+         
         // Set removal target based on spawn duration
         emoji.removalTarget = Date.now() + duration * 1000;
 
