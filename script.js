@@ -374,9 +374,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 createParticles(rect.left, rect.top, true);
                 emoji.classList.add('burst-bad');
 
-                // Decrease score
-                updateScore(-10);
-                decrementProgress(50);
+                // Decrease score and progressbar
+                updateScore(-Math.round(score * 0.1));
+                decrementProgress(progressBarValue * 0.5);
             } else {
                 playClickSound();
                 createParticles(rect.left, rect.top, false);
