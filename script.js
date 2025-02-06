@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const startScreen = document.getElementById('start-screen');
     const startButton = document.getElementById('start-button');
     const progressBar = document.getElementById('progress-bar');
+    const currentEmojiElement = document.getElementById('current-emoji');
+    const nextEmojiElement = document.getElementById('next-emoji');
 
     const goodEmojis = ['🍎', '🍏', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍈', '🍑', '🍒', '🍍', '🥭', '🥝', '🥑', '🥥', '🍓'];
     const badEmojis = ['💀', '☠️', '💩'];
@@ -26,6 +28,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let progressBarValue = 0;
     let progressIntervalID;
     let level = 1;
+
+    // Update level emojis display in the UI
+    function updateLevelEmojis() {
+        const currentIndex = (level - 1) < goodEmojis.length ? (level - 1) : goodEmojis.length - 1;
+        let nextIndex;
+        if (level < goodEmojis.length) {
+            nextIndex = level;
+        } else {
+            nextIndex = currentIndex;
+        }
+        currentEmojiElement.textContent = goodEmojis[currentIndex];
+        nextEmojiElement.textContent = goodEmojis[nextIndex];
+    }
 
     function pauseGame() {
         if (!isPaused && gameActive) {
@@ -188,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (progressBarValue === 100) {
             level++;
             resetProgress();
+            updateLevelEmojis();
         }
     }
     function decrementProgress(value = 1) {
@@ -349,6 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
             decrementProgress();
         }, 1000);
         
+        updateLevelEmojis();
         // Start game loops
         scheduleNextEmoji();
         emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100);
@@ -421,7 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.cancelable) e.preventDefault();
         startGame();
     };
-    restartButton.addEventListener('mousedown', handleRestartButton);;
+    restartButton.addEventListener('mousedown', handleRestartButton);
     restartButton.addEventListener('touchstart', handleRestartButton, { passive: false });
     
     // Handle restart with ad button click or tap

@@ -23,6 +23,10 @@ body {
     gap: 8px;
 }
 
+#current-emoji, #next-emoji {
+    line-height: 1rem;
+}
+
 /* Progress Bar Styles */
 #progress-container {
     flex: 1;
