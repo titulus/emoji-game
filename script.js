@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '🍓', '🍎', '🍑', '🥭', '🍊', '🍍', '🍌', '🍋', '🍐', '🍏', '🥝', '🥑', '🍈', '🥥', '🍇',
         '🍅', '🌶️', '🥕', '🌽', '🥔', '🧄', '🧅', '🥬', '🥦', '🥒', '🍆',
         '🌹', '🌺', '🌻', '💐', '🌼', '🌷',
+        '🏆'
     ];
     const badEmojis = ['💀', '☠️', '💩'];
     const particles = ['🌟', '✨', '⭐', '🔅', '🔆'];
@@ -217,12 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         scoreElement.textContent = score;
     }
-
-    function updateProgressBar() {
-        if (progressBar) {
-            progressBar.style.width = progressBarValue + '%';
-        }
-    }
     function showLevelTransition() {
         const transitionContainer = document.createElement('div');
         transitionContainer.classList.add('level-transition');
@@ -265,21 +260,43 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => particle.remove(), 1500); // Increase the duration for further flight
         }
     }
+
+    function updateProgressBar() {
+        if (progressBar) {
+            if (level >= goodEmojis.length) {
+                progressBar.style.width = '100%';
+                progressBar.style.setProperty('background', 'white', 'important');
+            } else {
+                progressBar.style.width = progressBarValue + '%';
+                progressBar.style.backgroundColor = '';
+            }
+        }
+    }
     
     function incrementProgress(value = 1) {
         const currentEmojiCost = emojiMultipliers[goodEmojis[level - 1]] || 1;
         const adjustedValue = value / currentEmojiCost;
-        progressBarValue = Math.min(progressBarValue + adjustedValue, 100);
-        updateProgressBar();
-        if (progressBarValue === 100) {
-            level++;
-            resetProgress();
-            updateLevelEmojis();
-            showLevelTransition();
+        if (level < goodEmojis.length) {
+            progressBarValue = Math.min(progressBarValue + adjustedValue, 100);
+            updateProgressBar();
+            if (progressBarValue === 100) {
+                level++;
+                resetProgress();
+                updateLevelEmojis();
+                showLevelTransition();
+            }
+        } else {
+            // Final level reached: lock progress bar at 100%.
+            progressBarValue = 100;
+            updateProgressBar();
         }
     }
     function decrementProgress(value = 1) {
-        progressBarValue = Math.max(progressBarValue - value, 0);
+        if (level >= goodEmojis.length) {
+            progressBarValue = 100;
+        } else {
+            progressBarValue = Math.max(progressBarValue - value, 0);
+        }
         updateProgressBar();
     }
     function resetProgress() {
