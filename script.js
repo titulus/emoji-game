@@ -13,28 +13,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentEmojiElement = document.getElementById('current-emoji');
     const nextEmojiElement = document.getElementById('next-emoji');
 
-    const goodEmojis = ['🍎', '🍏', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍈', '🍑', '🍒', '🍍', '🥭', '🥝', '🥑', '🥥', '🍓'];
-    const emojiMultipliers = {
-        '🍎': 1,
-        '🍏': 1,
-        '🍐': 2,
-        '🍊': 3,
-        '🍋': 5,
-        '🍌': 8,
-        '🍉': 13,
-        '🍇': 21,
-        '🍈': 34,
-        '🍑': 55,
-        '🍒': 89,
-        '🍍': 144,
-        '🥭': 233,
-        '🥝': 377,
-        '🥑': 610,
-        '🥥': 987,
-        '🍓': 1597
-    };
+    const goodEmojis = [
+        '🍓', '🍎', '🍑', '🥭', '🍊', '🍍', '🍌', '🍋', '🍐', '🍏', '🥝', '🥑', '🍈', '🥥', '🍇',
+        '🍅', '🌶️', '🥕', '🌽', '🥔', '🧄', '🧅', '🥬', '🥦', '🥒', '🍆',
+        '🌹', '🌺', '🌻', '💐', '🌼', '🌷',
+    ];
     const badEmojis = ['💀', '☠️', '💩'];
     const particles = ['🌟', '✨', '⭐', '🔅', '🔆'];
+
+    function generateFibonacciSequence(length) {
+        const sequence = [1, 1];
+        for (let i = 2; i < length; i++) {
+            sequence.push(sequence[i - 1] + sequence[i - 2]);
+        }
+        return sequence;
+    }
+    const emojiMultipliers = {};
+    const fibonacciSequence = generateFibonacciSequence(goodEmojis.length);
+    goodEmojis.forEach((emoji, index) => {
+        emojiMultipliers[emoji] = fibonacciSequence[index];
+    });
 
     // Game variables
     let audioContext;
