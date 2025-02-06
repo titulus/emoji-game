@@ -302,9 +302,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (score < 100) {
             badProbability = 0.2;
         } else if (score <= 1000) {
-            badProbability = 0.2 + ((score - 100) / 900) * 0.7;
+            badProbability = 0.2 + ((score - 100) / 900) * 0.3;
         } else {
-            badProbability = 0.9;
+            badProbability = 0.5;
         }
         const isBadEmoji = Math.random() < badProbability;
         let selectedEmoji;
