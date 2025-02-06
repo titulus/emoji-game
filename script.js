@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         currentEmojiElement.textContent = goodEmojis[currentIndex];
         nextEmojiElement.textContent = goodEmojis[nextIndex];
+        restartAdButton.textContent = '📺→' + goodEmojis[currentIndex];
     }
 
     function pauseGame() {
