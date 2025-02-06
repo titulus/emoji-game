@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '🏆'
     ];
     const badEmojis = ['💀', '☠️', '💩'];
+    const bonusEmojis = ['🧨'];
     const particles = ['🌟', '✨', '⭐', '🔅', '🔆'];
 
     function generateFibonacciSequence(length) {
@@ -166,22 +167,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function playBadClickSound() {
         if (!audioContext || audioContext.state !== 'running' || !soundEnabled) return;
-
+    
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
-
+    
         oscillator.type = 'sawtooth'; // More harsh sound
         oscillator.frequency.setValueAtTime(220, audioContext.currentTime); // Lower frequency
-
+    
         gainNode.gain.setValueAtTime(0, audioContext.currentTime);
         gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05);
         gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.2);
-
+    
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
-
+    
         oscillator.start();
         oscillator.stop(audioContext.currentTime + 0.2);
+    }
+    
+    function playBonusClickSound() {
+        if (!audioContext || audioContext.state !== 'running' || !soundEnabled) return;
+    
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+    
+        oscillator.type = 'triangle'; // Similar to click sound but different
+        oscillator.frequency.setValueAtTime(1320, audioContext.currentTime); // Higher frequency
+    
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + 0.02);
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.15);
+    
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+    
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.15);
     }
 
     function createParticles(x, y, isBad = false) {
@@ -327,26 +348,40 @@ document.addEventListener('DOMContentLoaded', () => {
         const emoji = document.createElement('div');
         emoji.classList.add('emoji');
 
-        let badProbability;
-        if (score < 100) {
-            badProbability = 0.2;
-        } else if (score <= 1000) {
-            badProbability = 0.2 + ((score - 100) / 900) * 0.3;
-        } else {
-            badProbability = 0.5;
-        }
-        const isBadEmoji = Math.random() < badProbability;
-        let selectedEmoji;
-        if (isBadEmoji) {
-            selectedEmoji = badEmojis[Math.floor(Math.random() * badEmojis.length)];
-        } else {
+        function determineEmojiType() {
+            const rand = Math.random();
+            if (rand < 0.01) {
+                return {
+                    type: 'bonus',
+                    emoji: bonusEmojis[Math.floor(Math.random() * bonusEmojis.length)]
+                };
+            }
+
+            const badProbability = score < 100 ? 0.2 :
+                                   score <= 1000 ? 0.2 + ((score - 100) / 900) * 0.3 :
+                                   0.5;
+
+            if (Math.random() < badProbability) {
+                return {
+                    type: 'bad',
+                    emoji: badEmojis[Math.floor(Math.random() * badEmojis.length)]
+                };
+            }
+
             const availableGoodEmojis = goodEmojis.slice(0, Math.min(level, goodEmojis.length));
-            selectedEmoji = availableGoodEmojis[Math.floor(Math.random() * availableGoodEmojis.length)];
+            return {
+                type: 'good',
+                emoji: availableGoodEmojis[Math.floor(Math.random() * availableGoodEmojis.length)]
+            };
         }
 
+        const { type, emoji: selectedEmoji } = determineEmojiType();
+
         emoji.innerText = selectedEmoji;
-        if (isBadEmoji) {
+        if (type === 'bad') {
             emoji.classList.add('bad-emoji');
+        } else if (type === 'bonus') {
+            emoji.classList.add('bonus-emoji');
         }
 
         const size = Math.random() * 2 + 1;
@@ -370,23 +405,36 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.cancelable) {
                 e.preventDefault();
             }
-
+        
             const rect = emoji.getBoundingClientRect();
-
+        
             if (emoji.classList.contains('bad-emoji')) {
                 playBadClickSound();
                 // Negative effects for bad emojis
                 createParticles(rect.left, rect.top, true);
                 emoji.classList.add('burst-bad');
-
+        
                 // Decrease score and progressbar
                 updateScore(-Math.round(score * 0.1));
                 decrementProgress(progressBarValue * 0.5);
+            } else if (emoji.textContent === "🧨") {
+                playBonusClickSound();
+                // Add bonus emoji styling
+                createParticles(rect.left, rect.top, false);
+                emoji.remove();
+        
+                // Bonus emoji logic: explode all bad emojis without affecting score, level, or progress
+                document.querySelectorAll('.bad-emoji').forEach(badEmoji => {
+                    const rectBad = badEmoji.getBoundingClientRect();
+                    createParticles(rectBad.left, rectBad.top, true);
+                    badEmoji.classList.add('burst-bad');
+                    badEmoji.remove();
+                });
             } else {
                 playClickSound();
                 createParticles(rect.left, rect.top, false);
                 emoji.classList.add('burst');
-
+        
                 // Calculate points (1-10) based on size and speed
                 // size range: 1-3 (smaller = better)
                 // duration range: 3-8 (shorter = better)
@@ -394,14 +442,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const speedScore = (8 - duration) / 5; // 0 to 1
                 const multiplier = emojiMultipliers[selectedEmoji] || 1;
                 const points = Math.max(1, Math.min(10, Math.ceil((sizeScore + speedScore) * 7))) * multiplier;
-                
+        
                 updateScore(points);
                 incrementProgress(points);
             }
-
+        
             // Update emoji stats
             emojiStats[selectedEmoji] = (emojiStats[selectedEmoji] || 0) + 1;
-
+        
             emoji.removalTarget = Date.now() + 500;
         };
 
