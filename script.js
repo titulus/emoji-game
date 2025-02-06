@@ -73,8 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const remaining = emoji.removalTarget - Date.now();
                     if (remaining > 0) {
                         emoji.removalRemaining = remaining;
+                        delete emoji.removalTarget;
+                    } else {
+                        emoji.remove();
                     }
-                    delete emoji.removalTarget;
                 }
             });
             if (window.ysdk) window.ysdk.features.GameplayAPI?.stop();
