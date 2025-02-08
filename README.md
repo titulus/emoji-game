@@ -66,7 +66,7 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 
 - `index.html`: Sets up the game interface and initializes the YaGames SDK.
 - `styles.css`: Contains the styling and animation definitions for the game.
-- `script.js`: Implements the game logic, including emoji spawning, animations, scoring, audio effects, and game state management.
+- `src/script.ts`: Implements the game logic, including emoji spawning, animations, scoring, audio effects, and game state management.
 
 ## Codestyle and Architecture Recommendations
 
