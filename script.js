@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const startScreen = document.getElementById('start-screen');
     const startButton = document.getElementById('start-button');
 
-    const goodEmojis = ['🍋', '🍎', '🍊', '🍌', '🍉', '🍇', '🍓', '🥝', '🥭', '🍍', '🥑', '🍒'];
+    const goodEmojis = [
+        '👋', '🤚', '🖐', '✋', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '👌', '🤏', '✌️', '🤟', '🤘', '🤙', '👉', '👈', '👆', '👇', '☝️', '👏', '🙌', '👐', '🤲', '✍️', '💪', '🦶'
+    ];
     const badEmojis = ['💀', '🦠', '🤬', '☠️', '💩'];
     const burstEmojis = ['🌟', '✨', '💥', '⭐', '🕸️', '🔅', '🔆'];
 
