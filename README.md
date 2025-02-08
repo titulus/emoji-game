@@ -14,7 +14,9 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 - **Emoji Types**:
   - **Good Emojis**: A variety of fruits, vegetables, and floral icons, with a trophy (🏆) available at advanced levels.
   - **Bad Emojis**: Identified as 💀, ☠️, and 💩, which penalize your score and progress.
-  - **Bonus Emoji**: Represented by 🧨, which, when clicked, vaporise all bad emojis on screen without affecting the player.
+  - **Bonus Emoji**:
+    - Represented by 🧨, which, when clicked, vaporizes all bad emojis on screen without affecting the player.
+    - Represented by 📦, which, when clicked, temporarily increases the frequency of emoji spawning to 10ms for 1 second and then returns to the normal frequency for another second.
 - **Audio Feedback**:
   - Uses the Web Audio API to generate dynamic sound effects.
   - Different sound profiles for emoji spawning, clicking good emojis (triangle wave), bad emoji clicks (sawtooth wave), and bonus emoji interactions.
@@ -33,7 +35,7 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 2. Press the central start button (▶️) to begin the game.
 3. Click or tap on good emojis (e.g., 🍓, 🍎, 🥭, 🍊, 🍋, 🍍, 🥝, 🥑) to earn points.
 4. Avoid clicking on bad emojis (💀, ☠️, 💩) to prevent score penalties.
-5. Look out for bonus emojis (🧨) which can clear bad emojis from the screen.
+5. Look out for bonus emojis (🧨 and 📦) which can clear bad emojis from the screen or temporarily increase the frequency of emoji spawning.
 6. Enjoy the dynamic, progressively challenging gameplay.
 7. When the game ends, press the restart button (🔄) to play again.
 8. Optionally, watch a rewarded video ad to resume the game while preserving your current stats.
