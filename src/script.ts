@@ -1,57 +1,67 @@
+interface HTMLDivElement {
+    removalTarget?: number;
+    removalRemaining?: number;
+}
+
+interface Window {
+    ysdk?: any;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // DOM elements
-    const emojiContainer = document.querySelector('.emoji-container');
-    const scoreElement = document.getElementById('score');
-    const gameOverScreen = document.querySelector('.game-over');
-    const finalScoreElement = document.getElementById('final-score');
-    const restartButton = document.getElementById('restart-button');
-    const restartAdButton = document.getElementById('restart-ad-button');
-    const soundToggleButton = document.getElementById('sound-toggle');
-    const startScreen = document.getElementById('start-screen');
-    const startButton = document.getElementById('start-button');
-    const progressBar = document.getElementById('progress-bar');
-    const currentEmojiElement = document.getElementById('current-emoji');
-    const nextEmojiElement = document.getElementById('next-emoji');
+    const emojiContainer = document.querySelector('.emoji-container') as HTMLDivElement;
+    const scoreElement = document.getElementById('score') as HTMLSpanElement;
+    const gameOverScreen = document.querySelector('.game-over') as HTMLDivElement;
+    const finalScoreElement = document.getElementById('final-score') as HTMLSpanElement;
+    const restartButton = document.getElementById('restart-button') as HTMLButtonElement;
+    const restartAdButton = document.getElementById('restart-ad-button') as HTMLButtonElement;
+    const soundToggleButton = document.getElementById('sound-toggle') as HTMLButtonElement;
+    const startScreen = document.getElementById('start-screen') as HTMLDivElement;
+    const startButton = document.getElementById('start-button') as HTMLButtonElement;
+    const progressBar = document.getElementById('progress-bar') as HTMLDivElement;
+    const currentEmojiElement = document.getElementById('current-emoji') as HTMLSpanElement;
+    const nextEmojiElement = document.getElementById('next-emoji') as HTMLSpanElement;
 
-    const goodEmojis = [
+    const goodEmojis: string[] = [
         '🍓', '🍎', '🍑', '🥭', '🍊', '🍍', '🍌', '🍋', '🍐', '🍏', '🥝', '🥑', '🍈', '🥥', '🍇',
         '🍅', '🌶️', '🥕', '🌽', '🥔', '🧄', '🧅', '🥬', '🥦', '🥒', '🍆',
         '🌹', '🌺', '🌻', '💐', '🌼', '🌷',
         '🏆'
     ];
-    const badEmojis = ['💀', '☠️', '💩'];
-    const bonusEmojis = ['🧨', '📦'];
-    const particles = ['🌟', '✨', '⭐', '🔅', '🔆'];
+    const badEmojis: string[] = ['💀', '☠️', '💩'];
+    const bonusEmojis: string[] = ['🧨', '📦'];
+    const particles: string[] = ['🌟', '✨', '⭐', '🔅', '🔆'];
 
-    function generateFibonacciSequence(length) {
+    function generateFibonacciSequence(length: number): number[] {
         const sequence = [1, 1];
         for (let i = 2; i < length; i++) {
             sequence.push(sequence[i - 1] + sequence[i - 2]);
         }
         return sequence;
     }
-    const emojiMultipliers = {};
+    const emojiMultipliers: { [key: string]: number } = {};
     const fibonacciSequence = generateFibonacciSequence(goodEmojis.length);
     goodEmojis.forEach((emoji, index) => {
         emojiMultipliers[emoji] = fibonacciSequence[index];
     });
 
     // Game variables
-    let audioContext;
-    let score = 0;
-    let gameActive = false;
-    let emojiRemovalIntervalID;
-    let emojiStats = {};
-    let soundEnabled = true;
-    let isPaused = false;
-    let progressBarValue = 0;
-    let progressIntervalID;
-    let level = 1;
+    let audioContext: AudioContext;
+    let score: number = 0;
+    let gameActive: boolean = false;
+        
+        let emojiRemovalIntervalID: number;
+            let emojiStats: { [key: string]: number } = {};
+            let soundEnabled: boolean = true;
+            let isPaused: boolean = false;
+            let progressBarValue: number = 0;
+            let progressIntervalID: number;
+    let level: number = 1;
 
     // Update level emojis display in the UI
     function updateLevelEmojis() {
         const currentIndex = (level - 1) < goodEmojis.length ? (level - 1) : goodEmojis.length - 1;
-        let nextIndex;
+        let nextIndex: number;
         if (level < goodEmojis.length) {
             nextIndex = level;
         } else {
@@ -69,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clearInterval(emojiRemovalIntervalID);
             clearInterval(progressIntervalID); // Clear progress interval
             // Pause all emoji animations and freeze their removal timers
-            document.querySelectorAll('.emoji').forEach(emoji => {
+            document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
                 emoji.style.animationPlayState = 'paused';
                 if (emoji.removalTarget) {
                     const remaining = emoji.removalTarget - Date.now();
@@ -90,9 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
             isPaused = false;
             gameActive = true;
             // For each emoji, restart removal timers with the remaining time
-            document.querySelectorAll('.emoji').forEach(emoji => {
+            document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
                 emoji.style.animationPlayState = 'running';
-                const duration = parseFloat(emoji.dataset.duration);
+                const duration = parseFloat(emoji.dataset.duration || '0');
                 if (duration) {
                     const fullDurationMs = duration * 1000;
                     const currentTop = emoji.getBoundingClientRect().top;
@@ -111,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initAudio() {
         if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            audioContext = new AudioContext();
         }
         if (audioContext.state === 'suspended') {
             audioContext.resume();
@@ -123,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         soundToggleButton.textContent = soundEnabled ? '🔊' : '🔇';
     }
 
-    function playSpawnSound(size) {
+    function playSpawnSound(size: number) {
         if (!audioContext || audioContext.state !== 'running' || !soundEnabled) return;
 
         const oscillator = audioContext.createOscillator();
@@ -205,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         oscillator.stop(audioContext.currentTime + 0.15);
     }
 
-    function createParticles(x, y, isBad = false) {
+    function createParticles(x: number, y: number, isBad: boolean = false) {
         const particleCount = Math.random() * 5 + 3;
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
@@ -233,12 +243,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateScore(points = 0) {
+    function updateScore(points: number = 0) {
         score += points;
         if (score < 0) {
             score = 0;
         }
-        scoreElement.textContent = score;
+        scoreElement.textContent = score.toString();
     }
     function showLevelTransition() {
         const transitionContainer = document.createElement('div');
@@ -260,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
     
-    function createLevelParticles(x, y, emoji) {
+    function createLevelParticles(x: number, y: number, emoji: string) {
         const particleCount = 20; // Increase the number of particles
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
@@ -295,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    function incrementProgress(value = 1) {
+    function incrementProgress(value: number = 1) {
         const currentEmojiCost = emojiMultipliers[goodEmojis[level - 1]] || 1;
         const adjustedValue = value / currentEmojiCost;
         if (level < goodEmojis.length) {
@@ -313,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateProgressBar();
         }
     }
-    function decrementProgress(value = 1) {
+    function decrementProgress(value: number = 1) {
         if (level >= goodEmojis.length) {
             progressBarValue = 100;
         } else {
@@ -325,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         updateProgressBar();
     }
-    function resetProgress(value = 0) {
+    function resetProgress(value: number = 0) {
         progressBarValue = value;
         updateProgressBar();
     }
@@ -335,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Only check removals when not paused
         if (isPaused) return;
         const now = Date.now();
-        document.querySelectorAll('.emoji').forEach(emoji => {
+        document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
             if (emoji.removalTarget && now >= emoji.removalTarget) {
                 emoji.remove();
             }
@@ -392,13 +402,13 @@ document.addEventListener('DOMContentLoaded', () => {
         emoji.style.top = `${y}px`;
 
         const duration = Math.random() * 5 + 3;
-        emoji.dataset.duration = duration;
+        emoji.dataset.duration = duration.toString();
         emoji.style.animationDuration = `${duration}s`;
          
         // Set removal target based on spawn duration
         emoji.removalTarget = Date.now() + duration * 1000;
 
-        const handleEmojiInteraction = (e) => {
+        const handleEmojiInteraction = (e: Event) => {
             if (!gameActive) return;
             if (e.cancelable) {
                 e.preventDefault();
@@ -426,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(resetSpawnDelay, 1000);
                 } else if (emoji.textContent === "🧨") {
                     // Bonus emoji logic: explode all bad emojis without affecting score, level, or progress
-                    document.querySelectorAll('.bad-emoji').forEach(badEmoji => {
+                    document.querySelectorAll<HTMLDivElement>('.bad-emoji').forEach(badEmoji => {
                         const rectBad = badEmoji.getBoundingClientRect();
                         createParticles(rectBad.left, rectBad.top, true);
                         badEmoji.remove();
@@ -478,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.random() * (currentMax - currentMin) + currentMin;
     }
 
-    let temporarySpawnDelay = false;
+    let temporarySpawnDelay: boolean = false;
     
     function scheduleNextEmoji() {
         if (!gameActive) return;
@@ -497,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
         temporarySpawnDelay = false;
     }
 
-    function startGame(config = {}) {
+    function startGame(config: any = {}) {
         // Reset game state
         score = config.score !== undefined ? config.score : 0;
         gameActive = true;
@@ -530,11 +540,11 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(emojiRemovalIntervalID);
 
         // Clear all existing emojis
-        const emojis = document.querySelectorAll('.emoji');
+        const emojis = document.querySelectorAll<HTMLDivElement>('.emoji');
         emojis.forEach(emoji => emoji.remove());
     
         // Show game over screen with stats
-        finalScoreElement.textContent = score;
+        finalScoreElement.textContent = score.toString();
         gameOverScreen.style.display = 'flex';
     
         if (window.ysdk) {
@@ -575,7 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('focus', resumeGame);
 
     // Handle start button click or tap
-    const handleStartButton = (e) => {
+    const handleStartButton = (e: Event) => {
         if (e.cancelable) e.preventDefault();
         initAudio(); // Initialize audio on first interaction
         startGame();
@@ -585,7 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
     startButton.addEventListener('touchstart', handleStartButton, { passive: false });
 
     // Handle restart button click or tap
-    const handleRestartButton = (e) => {
+    const handleRestartButton = (e: Event) => {
         if (e.cancelable) e.preventDefault();
         startGame();
     };
@@ -593,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
     restartButton.addEventListener('touchstart', handleRestartButton, { passive: false });
     
     // Handle restart with ad button click or tap
-    const handleRestartAdButton = (e) => {
+    const handleRestartAdButton = (e: Event) => {
         if (e.cancelable) e.preventDefault();
         if (window.ysdk && window.ysdk.adv && typeof window.ysdk.adv.showRewardedVideo === 'function') {
             window.ysdk.adv.showRewardedVideo({
@@ -616,7 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
     restartAdButton.addEventListener('touchstart', handleRestartAdButton, { passive: false });
 
     // Handle sound toggle button click or tap
-    const handleSoundButton = (e) => {
+    const handleSoundButton = (e: Event) => {
         if (e.cancelable) e.preventDefault();
         toggleSound();
     };

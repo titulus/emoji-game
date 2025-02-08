@@ -1,0 +1,22 @@
+{
+  "name": "emoji-game",
+  "version": "1.0.0",
+  "description": "An interactive game where you catch good emojis and avoid bad ones to score points. Experience dynamic gameplay with responsive audio-visual effects, automatic pause/resume functionality, and YaGames SDK integration for enhanced features like gameplay tracking and leaderboard submissions.",
+  "main": "script.js",
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0",
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-static-copy": "^2.2.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vite build && copy sdk.js dist",
+    "dev": "vite"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}

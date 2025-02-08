@@ -1,3 +1,5 @@
 sdk.js
 marketplace_content
 .vscode
+node_modules
+dist
