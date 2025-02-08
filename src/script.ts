@@ -50,12 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let score: number = 0;
     let gameActive: boolean = false;
         
-        let emojiRemovalIntervalID: number;
-            let emojiStats: { [key: string]: number } = {};
-            let soundEnabled: boolean = true;
-            let isPaused: boolean = false;
-            let progressBarValue: number = 0;
-            let progressIntervalID: number;
+    let emojiRemovalIntervalID: number;
+    let emojiStats: { [key: string]: number } = {};
+    let soundEnabled: boolean = true;
+    let isPaused: boolean = false;
+    let progressBarValue: number = 0;
+    let progressIntervalID: number;
     let level: number = 1;
 
     // Update level emojis display in the UI
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isPaused && gameActive) {
             isPaused = true;
             gameActive = false;
-            clearInterval(emojiRemovalIntervalID);
+            clearInterval(emojiRemovalIntervalID); // Clear the existing interval
             clearInterval(progressIntervalID); // Clear progress interval
             // Pause all emoji animations and freeze their removal timers
             document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.ysdk) window.ysdk.features.GameplayAPI?.stop();
         }
     }
-
+    
     function resumeGame() {
         if (isPaused && !gameOverScreen.style.display.includes('flex')) {
             isPaused = false;
@@ -110,10 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     emoji.removalTarget = Date.now() + remainingTime;
                 }
             });
-            emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100);
+            emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100) as unknown as number; // Set a new interval
             progressIntervalID = setInterval(() => {
                 decrementProgress();
-            }, 1000); // Restart progress interval
+            }, 1000) as unknown as number; // Restart progress interval
             scheduleNextEmoji();
             if (window.ysdk) window.ysdk.features.GameplayAPI?.start();
         }
@@ -524,12 +524,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         progressIntervalID = setInterval(() => {
             decrementProgress();
-        }, 1000);
+        }, 1000) as unknown as number;
     
         updateLevelEmojis();
         // Start game loops
         scheduleNextEmoji();
-        emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100);
+        emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100) as unknown as number;
     
         // Inform SDK that game has started
         if (window.ysdk) window.ysdk.features.GameplayAPI?.start();
