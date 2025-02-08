@@ -31,7 +31,7 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 
 1. Open `index.html` in your browser.
 2. Press the central start button (▶️) to start the game.
-3. Click or tap good emojis (🍋, 🍎, 🍊, 🍌, 🍉, 🍇, 🍓, 🥝, 🥭, 🍍, 🥑, 🍒) to earn points.
+3. Click or tap good emojis (👋, 🤚, 🖐 ...) to earn points.
 4. Avoid bad emojis (💀, 🦠, 🤬, ☠️, 💩) which reduce your score and time.
 5. Aim for smaller and faster emojis to maximize your score.
 6. Enjoy the dynamic game with bonus time challenges and responsive audio-visual effects.
@@ -39,7 +39,7 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 
 ## Technical Details
 
-- **Emoji Spawning**: 
+- **Emoji Spawning**:
   - Spawn rate dynamically adjusts from approximately 800ms to 100ms based on your score.
 - **Audio System**:
   - Spawn sounds: Sine wave with frequency based on emoji size.
