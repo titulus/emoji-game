@@ -570,7 +570,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isFullScreenAdShowing = true;
         holdGame();
         
-        sdkManager.showFullscreenAdv({
+        const showAdResult = sdkManager.showFullscreenAdv({
             onOpen: () => {
                 console.debug('Fullscreen ad opened');
             },
@@ -591,6 +591,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 runGame();
             }
         });
+
+        if (!showAdResult) {
+            console.warn('Fullscreen ad not available.');
+            isFullScreenAdShowing = false;
+            if (onComplete) {
+                onComplete();
+            }
+            runGame();
+        }
     }
 
     function isBonusLevel(level: number): boolean {
