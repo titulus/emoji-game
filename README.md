@@ -33,12 +33,12 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 
 1. Open `index.html` in your browser.
 2. Press the central start button (▶️) to begin the game.
-3. Click or tap on good emojis (e.g., 🍓, 🍎, 🥭, 🍊, 🍋, 🍍, 🥝, 🥑) to earn points.
+3. Click or tap on good emojis to earn points.
 4. Avoid clicking on bad emojis (💀, ☠️, 💩) to prevent score penalties.
-5. Look out for bonus emojis (🧨 and 📦) which can clear bad emojis from the screen or temporarily increase the frequency of emoji spawning.
+5. Look out for bonus emojis (🧨, 📦, 🐌, 🚀) which change game for a few seconds.
 6. Enjoy the dynamic, progressively challenging gameplay.
 7. When the game ends, press the restart button (🔄) to play again.
-8. Optionally, watch a rewarded video ad to resume the game while preserving your current stats.
+8. Optionally, watch a rewarded video ad (📺) to resume the game while preserving your current stats.
 
 ## Files
 
