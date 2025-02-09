@@ -9,6 +9,18 @@ body {
     position: relative;
 }
 
+* {
+    -webkit-touch-callout: none; /* Отключает меню при долгом нажатии на iOS */
+    -webkit-user-select: none;   /* Safari, Chrome, Opera */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* IE/Edge */
+    user-select: none;           /* Стандартный синтаксис */
+}
+
+* ::selection {
+    background: transparent;
+}
+
 .game-ui {
     position: fixed;
     top: 0;
@@ -80,7 +92,6 @@ button#sound-toggle:hover {
     font-size: 2rem;
     animation: fly 5s linear infinite;
     cursor: pointer;
-    user-select: none;
 }
 
 .game-over {

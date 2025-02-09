@@ -10,13 +10,19 @@
         YaGames.init().then(ysdk => {
             console.debug('SDK initialized');
             window.ysdk = ysdk;
-
+            
             ysdk.features.LoadingAPI?.ready();
             console.debug('SDK ready');
+
+            document.getElementsByTagName('body')[0].style.display = '';
+            console.debug('body shown');
+
+            ysdk.adv.showBannerAdv();
+            console.debug('Sticky banner shown');
         });
     </script>
 </head>
-<body>
+<body style="display: none;" unselectable="on" onselectstart="return false;">
     <div class="game-ui">
         <button id="sound-toggle">🔊</button>
         <span id="current-emoji"></span>
