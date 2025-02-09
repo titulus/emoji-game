@@ -61,15 +61,19 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 - **Pause/Resume Functionality**:
   - The game state automatically pauses when the tab or window loses focus and resumes when reactivated.
 - **YaGames SDK**:
-  - Integration with YaGames SDK allows for gameplay tracking, in-game notifications, and leaderboard submissions.
-  - Rewarded video ads are available to provide bonus restart options without resetting progress.
+  - Implemented in a separate `SDKManager` class for better code organization
+  - Handles gameplay state tracking (start/stop)
+  - Manages leaderboard score submissions
+  - Provides interface for rewarded video ads
+  - Includes TypeScript type definitions for better type safety
 
 ## Files
 
 - `index.html`: Sets up the game interface and initializes the YaGames SDK.
 - `styles.css`: Contains the styling and animation definitions for the game.
-- `src/script.ts`: Implements the core game logic, including emoji spawning, animations, scoring, and game state management.
+- `src/script.ts`: Implements the core game logic, including emoji spawning, animations, and scoring.
 - `src/audio.ts`: Manages all audio-related functionality using Web Audio API, including sound effects for emoji spawning, clicking good/bad emojis, and bonus interactions.
+- `src/sdk.ts`: Handles all interactions with YaGames SDK, including gameplay tracking, leaderboard submissions, and rewarded video ads.
 
 ## Codestyle and Architecture Recommendations
 

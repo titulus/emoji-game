@@ -1,31 +1,5 @@
 import { AudioManager } from './audio';
-
-interface YaGamesSDK {
-    features: {
-        GameplayAPI?: {
-            start: () => void;
-            stop: () => void;
-        };
-    };
-    adv?: {
-        showRewardedVideo: (config: {
-            callbacks: {
-                onOpen?: () => void;
-                onRewarded?: () => void;
-                onClose?: () => void;
-                onError?: (error: any) => void;
-            };
-        }) => void;
-    };
-    isAvailableMethod: (method: string) => Promise<boolean>;
-    setLeaderboardScore: (leaderboardName: string, score: number) => Promise<void>;
-}
-
-declare global {
-    interface Window {
-        ysdk?: YaGamesSDK;
-    }
-}
+import { SDKManager } from './sdk';
 
 interface HTMLDivElement extends Element {
     removalTarget?: number;
@@ -75,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Game variables
     const audioManager = new AudioManager();
+    const sdkManager = new SDKManager();
     let score: number = 0;
     let gameActive: boolean = false;
     let emojiRemovalIntervalID: number;
@@ -117,10 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
-            const sdk = window.ysdk;
-            if (sdk) {
-                sdk.features.GameplayAPI?.stop();
-            }
+            sdkManager.stopGameplay();
         }
     }
     
@@ -144,10 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 decrementProgress();
             }, 1000) as unknown as number; // Restart progress interval
             scheduleNextEmoji();
-            const sdk = window.ysdk;
-            if (sdk) {
-                sdk.features.GameplayAPI?.start();
-            }
+            sdkManager.startGameplay();
         }
     }
 
@@ -471,40 +440,21 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleNextEmoji();
         emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100) as unknown as number;
     
-        // Inform SDK that game has started
-        const sdk = window.ysdk;
-        if (sdk) {
-            sdk.features.GameplayAPI?.start();
-        }
+        sdkManager.startGameplay();
     }
 
     function endGame() {
         gameActive = false;
         clearInterval(emojiRemovalIntervalID);
 
-        // Clear all existing emojis
         const emojis = document.querySelectorAll<HTMLDivElement>('.emoji');
         emojis.forEach(emoji => emoji.remove());
     
-        // Show game over screen with stats
         finalScoreElement.textContent = score.toString();
         gameOverScreen.style.display = 'flex';
     
-        const sdk = window.ysdk;
-        if (sdk) {
-            // Inform SDK that game has ended
-            sdk.features.GameplayAPI?.stop();
-            // Submit score to leaderboard if available
-            sdk.isAvailableMethod('leaderboards.setLeaderboardScore')
-                .then(isAvailable => {
-                    if (isAvailable && sdk) {
-                        sdk.setLeaderboardScore('leader', score)
-                            .then(() => console.debug('Score submitted to leaderboard'))
-                            .catch(err => console.error('Error submitting score:', err));
-                    }
-                })
-                .catch(err => console.error('Error checking leaderboard availability:', err));
-        }
+        sdkManager.stopGameplay();
+        sdkManager.submitScore(score);
     }
 
     document.addEventListener('selectstart', (e) => {
@@ -549,20 +499,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle restart with ad button click or tap
     const handleRestartAdButton = (e: Event) => {
         if (e.cancelable) e.preventDefault();
-        const sdk = window.ysdk;
-        if (sdk?.adv && typeof sdk.adv.showRewardedVideo === 'function') {
-            sdk.adv.showRewardedVideo({
-                callbacks: {
-                    onOpen: () => { console.debug('Video ad open.'); },
-                    onRewarded: () => {
-                        console.debug('Reward granted.');
-                        startGame({ score, level, progressBarValue, emojiStats});
-                    },
-                    onClose: () => { console.debug('Video ad closed.'); },
-                    onError: (error) => { console.error('Error while opening video ad:', error); }
-                }
-            });
-        } else {
+        
+        const showAdResult = sdkManager.showRewardedVideo({
+            onOpen: () => { console.debug('Video ad open.'); },
+            onRewarded: () => {
+                console.debug('Reward granted.');
+                startGame({ score, level, progressBarValue, emojiStats});
+            },
+            onClose: () => { console.debug('Video ad closed.'); },
+            onError: (error) => { console.error('Error while opening video ad:', error); }
+        });
+
+        if (!showAdResult) {
             console.warn('Rewarded video ad not available.');
             startGame({ score, level, progressBarValue, emojiStats});
         }
