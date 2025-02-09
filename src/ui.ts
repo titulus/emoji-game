@@ -23,6 +23,14 @@ export class UIManager {
         this.progressBar = document.getElementById('progress-bar') as HTMLDivElement;
         this.currentEmojiElement = document.getElementById('current-emoji') as HTMLSpanElement;
         this.nextEmojiElement = document.getElementById('next-emoji') as HTMLSpanElement;
+
+        document.addEventListener('selectstart', (e) => {
+            e.preventDefault();
+        });
+
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
     }
 
     updateScore(score: number) {
@@ -87,5 +95,18 @@ export class UIManager {
     onSoundButtonClick(handler: (e: Event) => void) {
         this.soundToggleButton.addEventListener('mousedown', handler);
         this.soundToggleButton.addEventListener('touchstart', handler, { passive: false });
+    }
+
+    setupWindowEvents(onPause: () => void, onResume: () => void) {
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                onPause();
+            } else {
+                onResume();
+            }
+        });
+
+        window.addEventListener('blur', onPause);
+        window.addEventListener('focus', onResume);
     }
 } 

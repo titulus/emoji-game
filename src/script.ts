@@ -456,17 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Pause and resume game on visibility change
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            pauseGame();
-        } else {
-            resumeGame();
-        }
-    });
-
-    // Pause and resume game on window blur and focus
-    window.addEventListener('blur', pauseGame);
-    window.addEventListener('focus', resumeGame);
+    uiManager.setupWindowEvents(pauseGame, resumeGame);
 
     // Handle start button click or tap
     const handleStartButton = (e: Event) => {
@@ -475,16 +465,12 @@ document.addEventListener('DOMContentLoaded', () => {
         startGame();
         uiManager.hideStartScreen();
     };
-    startButton.addEventListener('mousedown', handleStartButton);
-    startButton.addEventListener('touchstart', handleStartButton, { passive: false });
 
     // Handle restart button click or tap
     const handleRestartButton = (e: Event) => {
         if (e.cancelable) e.preventDefault();
         startGame();
     };
-    restartButton.addEventListener('mousedown', handleRestartButton);
-    restartButton.addEventListener('touchstart', handleRestartButton, { passive: false });
     
     // Handle restart with ad button click or tap
     const handleRestartAdButton = (e: Event) => {
@@ -505,16 +491,12 @@ document.addEventListener('DOMContentLoaded', () => {
             startGame({ score, level, progressBarValue, emojiStats});
         }
     };
-    restartAdButton.addEventListener('mousedown', handleRestartAdButton);
-    restartAdButton.addEventListener('touchstart', handleRestartAdButton, { passive: false });
 
     // Handle sound toggle button click or tap
     const handleSoundButton = (e: Event) => {
         if (e.cancelable) e.preventDefault();
         toggleSound();
     };
-    soundToggleButton.addEventListener('mousedown', handleSoundButton);
-    soundToggleButton.addEventListener('touchstart', handleSoundButton, { passive: false });
 
     uiManager.onStartButtonClick(handleStartButton);
     uiManager.onRestartButtonClick(handleRestartButton);
