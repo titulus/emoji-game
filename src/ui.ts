@@ -10,6 +10,7 @@ export class UIManager {
     private progressBar: HTMLDivElement;
     private currentEmojiElement: HTMLSpanElement;
     private nextEmojiElement: HTMLSpanElement;
+    private pauseMenu: HTMLElement;
 
     constructor() {
         this.scoreElement = document.getElementById('score') as HTMLSpanElement;
@@ -23,6 +24,7 @@ export class UIManager {
         this.progressBar = document.getElementById('progress-bar') as HTMLDivElement;
         this.currentEmojiElement = document.getElementById('current-emoji') as HTMLSpanElement;
         this.nextEmojiElement = document.getElementById('next-emoji') as HTMLSpanElement;
+        this.pauseMenu = document.querySelector('.pause-menu') as HTMLElement;
 
         document.addEventListener('selectstart', (e) => {
             e.preventDefault();
@@ -108,5 +110,33 @@ export class UIManager {
 
         window.addEventListener('blur', onPause);
         window.addEventListener('focus', onResume);
+    }
+
+    showPauseMenu() {
+        this.pauseMenu.style.display = 'flex';
+    }
+
+    hidePauseMenu() {
+        this.pauseMenu.style.display = 'none';
+    }
+
+    isPauseMenuVisible(): boolean {
+        return this.pauseMenu.style.display === 'flex';
+    }
+
+    onPauseButtonClick(handler: (e: Event) => void) {
+        const pauseButton = document.getElementById('pause-button');
+        if (pauseButton) {
+            pauseButton.addEventListener('mousedown', handler);
+            pauseButton.addEventListener('touchstart', handler, { passive: false });
+        }
+    }
+
+    onResumeButtonClick(handler: (e: Event) => void) {
+        const resumeButton = document.getElementById('resume-button');
+        if (resumeButton) {
+            resumeButton.addEventListener('mousedown', handler);
+            resumeButton.addEventListener('touchstart', handler, { passive: false });
+        }
     }
 } 

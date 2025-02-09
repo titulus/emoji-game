@@ -60,7 +60,8 @@ body {
     transition: width 0.2s ease;
 }
 
-button#sound-toggle {
+button#sound-toggle,
+button#pause-button {
     background: none;
     border: none;
     font-size: 2rem;
@@ -69,7 +70,8 @@ button#sound-toggle {
     transition: transform 0.2s;
 }
 
-button#sound-toggle:hover {
+button#sound-toggle:hover,
+button#pause-button:hover {
     transform: scale(1.2);
 }
 
@@ -323,4 +325,43 @@ button#sound-toggle:hover {
         opacity: 0;
         transform: scale(1.5);
     }
+}
+
+/* Pause Menu Styling */
+.pause-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1500;
+}
+
+.pause-menu-content {
+    background: linear-gradient(135deg, #ffffff, #f0f0f0);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    animation: fadeInUp 0.5s ease-out;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.pause-menu-content button {
+    background: none;
+    border: none;
+    font-size: 3rem;
+    cursor: pointer;
+    padding: 10px;
+    transition: transform 0.2s;
+}
+
+.pause-menu-content button:hover {
+    transform: scale(1.2);
 }

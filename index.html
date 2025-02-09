@@ -30,7 +30,7 @@
 </head>
 <body style="display: none;" unselectable="on" onselectstart="return false;">
     <div class="game-ui">
-        <button id="sound-toggle">🔊</button>
+        <button id="pause-button">⏸️</button>
         <span id="current-emoji"></span>
         <div id="progress-container">
             <div id="progress-bar"></div>
@@ -41,6 +41,12 @@
     <div class="emoji-container"></div>
     <div id="start-screen" class="start-screen">
         <button id="start-button">▶️</button>
+    </div>
+    <div class="pause-menu" style="display: none;">
+        <div class="pause-menu-content">
+            <button id="resume-button">⏯️</button>
+            <button id="sound-toggle">🔊</button>
+        </div>
     </div>
     <div class="game-over" style="display: none;">
         <div class="game-over-content">

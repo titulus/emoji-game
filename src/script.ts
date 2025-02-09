@@ -59,8 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const sdkManager = new SDKManager();
     const uiManager = new UIManager();
     let score: number = 0;
-    let gameActive: boolean = false;
+    let gameStarted: boolean = false;
     let emojiStats: { [key: string]: number } = {};
+    let isSuspended: boolean = false;
     let isPaused: boolean = false;
     let progressBarValue: number = 0;
     let progressIntervalID: number;
@@ -76,34 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
             nextIndex = currentIndex;
         }
         uiManager.updateLevelEmojis(goodEmojis[currentIndex], goodEmojis[nextIndex]);
-    }
-
-    function pauseGame() {
-        if (!isPaused && gameActive) {
-            isPaused = true;
-            gameActive = false;
-            clearInterval(progressIntervalID);
-            document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
-                emoji.style.animationPlayState = 'paused';
-            });
-            sdkManager.stopGameplay();
-        }
-    }
-    
-    function resumeGame() {
-        if (isPaused && !uiManager.isGameOverVisible()) {
-            isPaused = false;
-            gameActive = true;
-            document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
-                emoji.style.animationPlayState = 'running';
-                const duration = parseFloat(emoji.dataset.duration || '0');
-            });
-            progressIntervalID = setInterval(() => {
-                decrementProgress();
-            }, 1000) as unknown as number; // Restart progress interval
-            scheduleNextEmoji();
-            sdkManager.startGameplay();
-        }
     }
 
     function toggleSound() {
@@ -227,8 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
         progressBarValue = value;
         updateProgressBar();
     }
-
-    
         
     function handleBadEmojiInteraction(rect: DOMRect) {
         audioManager.playBadClickSound();
@@ -281,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function spawnEmoji() {
-        if (!gameActive) return;
+        if (!isGameRunning()) return;
 
         const emoji = document.createElement('div') as HTMLDivElement;
         emoji.classList.add('emoji');
@@ -340,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
          
         const handleEmojiInteraction = (e: Event) => {
-            if (!gameActive) return;
+            if (!isGameRunning()) return;
             if (e.cancelable) {
                 e.preventDefault();
             }
@@ -402,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let temporarySpawnDelay: boolean = false;
     
     function scheduleNextEmoji() {
-        if (!gameActive) return;
+        if (!isGameRunning()) return;
         const delay = temporarySpeed ? (temporarySpawnDelay ? 5 : calculateSpawnDelay() / 2) : (temporarySlow ? (temporarySpawnDelay ? 20 : calculateSpawnDelay() * 2) : (isSpeedLevel(level) ? (temporarySpawnDelay ? 5 : calculateSpawnDelay() / 2) : (isSlowLevel(level) ? (temporarySpawnDelay ? 20 : calculateSpawnDelay() * 2) : (temporarySpawnDelay ? 10 : calculateSpawnDelay()))));
         setTimeout(() => {
             spawnEmoji();
@@ -437,10 +408,62 @@ document.addEventListener('DOMContentLoaded', () => {
         temporarySpawnDelay = false;
     }
 
+    function isGameRunning(): boolean {
+        return gameStarted && !isPaused && !isSuspended;
+    }
+
+    function runGame() {
+        if (!isGameRunning()) return;
+        document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
+            emoji.style.animationPlayState = 'running';
+        });
+        progressIntervalID = setInterval(() => {
+            decrementProgress();
+        }, 1000) as unknown as number;
+        scheduleNextEmoji();
+        sdkManager.startGameplay();
+    }
+
+    function holdGame() {
+        clearInterval(progressIntervalID);
+        document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
+            emoji.style.animationPlayState = 'paused';
+        });
+        sdkManager.stopGameplay();
+    }
+
+    function suspendGame() {
+        if (!isSuspended) {
+            isSuspended = true;
+            holdGame();
+        }
+    }
+    
+    function restoreGame() {
+        if (isSuspended) {
+            isSuspended = false;
+            runGame();
+        }
+    }
+
+    function pauseGame() {
+        if (!isPaused) {
+            isPaused = true;
+            holdGame();
+        }
+    }
+
+    function resumeGame() {
+        if (isPaused) {
+            isPaused = false;
+            runGame();
+        }
+    }
+
     function startGame(config: any = {}) {
         // Reset game state
         score = config.score !== undefined ? config.score : 0;
-        gameActive = true;
+        gameStarted = true;
         emojiStats = config.emojiStats !== undefined ? config.emojiStats : {};
         level = config.level !== undefined ? config.level : 1;
         progressBarValue = config.progressBarValue !== undefined ? config.progressBarValue : 0;
@@ -449,35 +472,28 @@ document.addEventListener('DOMContentLoaded', () => {
         updateScore();
         uiManager.hideGameOver();
         resetProgress();
+        updateLevelEmojis();
+
         if (progressIntervalID) {
             clearInterval(progressIntervalID);
         }
-        progressIntervalID = setInterval(() => {
-            decrementProgress();
-        }, 1000) as unknown as number;
-    
-        updateLevelEmojis();
-        // Start game loops
-        scheduleNextEmoji();
-    
-        sdkManager.startGameplay();
+        runGame();
     }
 
     function endGame() {
-        gameActive = false;
+        gameStarted = false;
+        holdGame();
 
         const emojis = document.querySelectorAll<HTMLDivElement>('.emoji');
         emojis.forEach(emoji => emoji.remove());
     
         uiManager.updateFinalScore(score);
         uiManager.showGameOver();
-    
-        sdkManager.stopGameplay();
         sdkManager.submitScore(score);
     }
 
     // Pause and resume game on visibility change
-    uiManager.setupWindowEvents(pauseGame, resumeGame);
+    uiManager.setupWindowEvents(suspendGame, restoreGame);
 
     // Handle start button click or tap
     const handleStartButton = (e: Event) => {
@@ -519,8 +535,28 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleSound();
     };
 
+    // Handle pause button click or tap
+    const handlePauseButton = (e: Event) => {
+        if (e.cancelable) e.preventDefault();
+        if (isGameRunning()) {
+            pauseGame();
+            uiManager.showPauseMenu();
+        }
+    };
+
+    // Handle resume button click or tap
+    const handleResumeButton = (e: Event) => {
+        if (e.cancelable) e.preventDefault();
+        if (isPaused) {
+            uiManager.hidePauseMenu();
+            resumeGame();
+        }
+    };
+
     uiManager.onStartButtonClick(handleStartButton);
     uiManager.onRestartButtonClick(handleRestartButton);
     uiManager.onRestartAdButtonClick(handleRestartAdButton);
     uiManager.onSoundButtonClick(handleSoundButton);
+    uiManager.onPauseButtonClick(handlePauseButton);
+    uiManager.onResumeButtonClick(handleResumeButton);
 });
