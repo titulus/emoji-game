@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
         const largeEmoji = document.createElement('div');
         largeEmoji.classList.add('large-emoji');
-        largeEmoji.innerText = goodEmojis[level - 1];
+        largeEmoji.innerText = isSpeedLevel(level) ? '🚀' : goodEmojis[level - 1];
     
         transitionContainer.appendChild(largeEmoji);
     
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const duration = Math.random() * 5 + 3;
         emoji.dataset.duration = duration.toString();
-        emoji.style.animationDuration = `${duration}s`;
+        emoji.style.animationDuration = `${isSpeedLevel(level) ? duration / 2 : duration}s`;
          
         const handleEmojiInteraction = (e: Event) => {
             if (!gameActive) return;
@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function scheduleNextEmoji() {
         if (!gameActive) return;
-        const delay = temporarySpawnDelay ? 10 : calculateSpawnDelay();
+        const delay = isSpeedLevel(level) ? (temporarySpawnDelay ? 5 : calculateSpawnDelay() / 2) : (temporarySpawnDelay ? 10 : calculateSpawnDelay());
         setTimeout(() => {
             spawnEmoji();
             scheduleNextEmoji();
@@ -381,6 +381,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function setTemporarySpawnDelay() {
         temporarySpawnDelay = true;
+    }
+    
+    function isSpeedLevel(level: number): boolean {
+        return level % 5 === 0;
     }
     
     function resetSpawnDelay() {
