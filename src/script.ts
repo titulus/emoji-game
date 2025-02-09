@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const emoji = document.createElement('div') as HTMLDivElement;
         emoji.classList.add('emoji');
 
-        function determineEmojiType() {
+        function determineEmoji() {
             const rand = Math.random();
             if (rand < 0.01) {
                 return {
@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
 
-        const { type, emoji: selectedEmoji } = determineEmojiType();
+        const { type, emoji: selectedEmoji } = determineEmoji();
 
         emoji.innerText = selectedEmoji;
         if (type === 'bad') {
