@@ -6,7 +6,7 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 
 - **Score System**:
   - Earn points by clicking on good emojis.
-  - Points range from 1 to 10, calculated based on the emoji’s size and speed, and further enhanced by a Fibonacci-based multiplier unique to each emoji.
+  - Points range from 1 to 10, calculated based on the emoji's size and speed, and further enhanced by a Fibonacci-based multiplier unique to each emoji.
   - Avoid bad emojis which decrease your score and progress.
 - **Dynamic Spawning**:
   - Emojis appear randomly from the bottom of the screen.
@@ -44,12 +44,14 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 
 - **Emoji Spawning**:
   - Spawn intervals dynamically adjust from approximately 800ms to 100ms based on in-game score.
-  - The spawn delay is determined by a progression algorithm that factors in the player’s score.
+  - The spawn delay is determined by a progression algorithm that factors in the player's score.
 - **Audio System**:
-  - **Spawn Sounds**: Sine wave sounds with frequency modulated by the emoji's size.
-  - **Click Sounds**: Triangle wave sounds with a quick attack and smooth decay.
-  - **Bad Click Sounds**: Sawtooth wave sounds with a harsher tone.
-  - **Bonus Click Sounds**: Enhanced triangle wave sounds with higher frequency.
+  - Implemented in a separate `AudioManager` class for better code organization
+  - **Spawn Sounds**: Sine wave sounds with frequency modulated by the emoji's size
+  - **Click Sounds**: Triangle wave sounds with a quick attack and smooth decay
+  - **Bad Click Sounds**: Sawtooth wave sounds with a harsher tone
+  - **Bonus Click Sounds**: Enhanced triangle wave sounds with higher frequency
+  - Supports sound toggling and automatic initialization
 - **Scoring & Difficulty**:
   - Points are computed from a combination of emoji size (smaller emojis yield higher points) and speed of movement.
   - Each good emoji has a Fibonacci-based multiplier, adding a unique scaling factor to the score.
@@ -66,7 +68,8 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 
 - `index.html`: Sets up the game interface and initializes the YaGames SDK.
 - `styles.css`: Contains the styling and animation definitions for the game.
-- `src/script.ts`: Implements the game logic, including emoji spawning, animations, scoring, audio effects, and game state management.
+- `src/script.ts`: Implements the core game logic, including emoji spawning, animations, scoring, and game state management.
+- `src/audio.ts`: Manages all audio-related functionality using Web Audio API, including sound effects for emoji spawning, clicking good/bad emojis, and bonus interactions.
 
 ## Codestyle and Architecture Recommendations
 

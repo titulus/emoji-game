@@ -1,10 +1,38 @@
-interface HTMLDivElement {
-    removalTarget?: number;
-    removalRemaining?: number;
+import { AudioManager } from './audio';
+
+interface YaGamesSDK {
+    features: {
+        GameplayAPI?: {
+            start: () => void;
+            stop: () => void;
+        };
+    };
+    adv?: {
+        showRewardedVideo: (config: {
+            callbacks: {
+                onOpen?: () => void;
+                onRewarded?: () => void;
+                onClose?: () => void;
+                onError?: (error: any) => void;
+            };
+        }) => void;
+    };
+    isAvailableMethod: (method: string) => Promise<boolean>;
+    setLeaderboardScore: (leaderboardName: string, score: number) => Promise<void>;
 }
 
-interface Window {
-    ysdk?: any;
+declare global {
+    interface Window {
+        ysdk?: YaGamesSDK;
+    }
+}
+
+interface HTMLDivElement extends Element {
+    removalTarget?: number;
+    removalRemaining?: number;
+    style: CSSStyleDeclaration;
+    dataset: DOMStringMap;
+    innerText: string;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -46,13 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Game variables
-    let audioContext: AudioContext;
+    const audioManager = new AudioManager();
     let score: number = 0;
     let gameActive: boolean = false;
-        
     let emojiRemovalIntervalID: number;
     let emojiStats: { [key: string]: number } = {};
-    let soundEnabled: boolean = true;
     let isPaused: boolean = false;
     let progressBarValue: number = 0;
     let progressIntervalID: number;
@@ -91,7 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
-            if (window.ysdk) window.ysdk.features.GameplayAPI?.stop();
+            const sdk = window.ysdk;
+            if (sdk) {
+                sdk.features.GameplayAPI?.stop();
+            }
         }
     }
     
@@ -115,104 +144,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 decrementProgress();
             }, 1000) as unknown as number; // Restart progress interval
             scheduleNextEmoji();
-            if (window.ysdk) window.ysdk.features.GameplayAPI?.start();
-        }
-    }
-
-    function initAudio() {
-        if (!audioContext) {
-            audioContext = new AudioContext();
-        }
-        if (audioContext.state === 'suspended') {
-            audioContext.resume();
+            const sdk = window.ysdk;
+            if (sdk) {
+                sdk.features.GameplayAPI?.start();
+            }
         }
     }
 
     function toggleSound() {
-        soundEnabled = !soundEnabled;
-        soundToggleButton.textContent = soundEnabled ? '🔊' : '🔇';
-    }
-
-    function playSpawnSound(size: number) {
-        if (!audioContext || audioContext.state !== 'running' || !soundEnabled) return;
-
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-
-        oscillator.type = 'sine';
-        const baseFreq = 880;
-        const freq = baseFreq / (size * 1.5);
-        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
-
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.05);
-        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3);
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.3);
-    }
-
-    function playClickSound() {
-        if (!audioContext || audioContext.state !== 'running' || !soundEnabled) return;
-
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-
-        oscillator.type = 'triangle';
-        oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
-
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.2, audioContext.currentTime + 0.02);
-        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.15);
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.15);
-    }
-
-    function playBadClickSound() {
-        if (!audioContext || audioContext.state !== 'running' || !soundEnabled) return;
-    
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-    
-        oscillator.type = 'sawtooth'; // More harsh sound
-        oscillator.frequency.setValueAtTime(220, audioContext.currentTime); // Lower frequency
-    
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05);
-        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.2);
-    
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-    
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.2);
-    }
-    
-    function playBonusClickSound() {
-        if (!audioContext || audioContext.state !== 'running' || !soundEnabled) return;
-    
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-    
-        oscillator.type = 'triangle'; // Similar to click sound but different
-        oscillator.frequency.setValueAtTime(1320, audioContext.currentTime); // Higher frequency
-    
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + 0.02);
-        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.15);
-    
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-    
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.15);
+        const isEnabled = audioManager.toggleSound();
+        soundToggleButton.textContent = isEnabled ? '🔊' : '🔇';
     }
 
     function createParticles(x: number, y: number, isBad: boolean = false) {
@@ -355,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function spawnEmoji() {
         if (!gameActive) return;
 
-        const emoji = document.createElement('div');
+        const emoji = document.createElement('div') as HTMLDivElement;
         emoji.classList.add('emoji');
 
         function determineEmojiType() {
@@ -394,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const size = Math.random() * 2 + 1;
         emoji.style.fontSize = `${size}rem`;
-        playSpawnSound(size);
+        audioManager.playSpawnSound(size);
 
         const x = Math.random() * (window.innerWidth - 50);
         const y = window.innerHeight;
@@ -417,15 +358,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const rect = emoji.getBoundingClientRect();
         
             if (emoji.classList.contains('bad-emoji')) {
-                playBadClickSound();
+                audioManager.playBadClickSound();
                 // Negative effects for bad emojis
                 createParticles(rect.left, rect.top, true);
-        
                 // Decrease score and progressbar
                 updateScore(-Math.round(score * 0.1));
                 decrementProgress(progressBarValue * 0.5);
             } else if (emoji.textContent === "🧨" || emoji.textContent === "📦") {
-                playBonusClickSound();
+                audioManager.playBonusClickSound();
                 // Add bonus emoji styling
                 createParticles(rect.left, rect.top, false);
                 emoji.remove();
@@ -443,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
             } else {
-                playClickSound();
+                audioManager.playClickSound();
                 createParticles(rect.left, rect.top, false);
         
                 // Calculate points (1-10) based on size and speed
@@ -532,7 +472,10 @@ document.addEventListener('DOMContentLoaded', () => {
         emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100) as unknown as number;
     
         // Inform SDK that game has started
-        if (window.ysdk) window.ysdk.features.GameplayAPI?.start();
+        const sdk = window.ysdk;
+        if (sdk) {
+            sdk.features.GameplayAPI?.start();
+        }
     }
 
     function endGame() {
@@ -547,14 +490,15 @@ document.addEventListener('DOMContentLoaded', () => {
         finalScoreElement.textContent = score.toString();
         gameOverScreen.style.display = 'flex';
     
-        if (window.ysdk) {
+        const sdk = window.ysdk;
+        if (sdk) {
             // Inform SDK that game has ended
-            window.ysdk.features.GameplayAPI?.stop();
+            sdk.features.GameplayAPI?.stop();
             // Submit score to leaderboard if available
-            window.ysdk.isAvailableMethod('leaderboards.setLeaderboardScore')
+            sdk.isAvailableMethod('leaderboards.setLeaderboardScore')
                 .then(isAvailable => {
-                    if (isAvailable) {
-                        window.ysdk.setLeaderboardScore('leader', score)
+                    if (isAvailable && sdk) {
+                        sdk.setLeaderboardScore('leader', score)
                             .then(() => console.debug('Score submitted to leaderboard'))
                             .catch(err => console.error('Error submitting score:', err));
                     }
@@ -587,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle start button click or tap
     const handleStartButton = (e: Event) => {
         if (e.cancelable) e.preventDefault();
-        initAudio(); // Initialize audio on first interaction
+        audioManager.init(); // Initialize audio on first interaction
         startGame();
         startScreen.style.display = 'none';
     };
@@ -605,8 +549,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle restart with ad button click or tap
     const handleRestartAdButton = (e: Event) => {
         if (e.cancelable) e.preventDefault();
-        if (window.ysdk && window.ysdk.adv && typeof window.ysdk.adv.showRewardedVideo === 'function') {
-            window.ysdk.adv.showRewardedVideo({
+        const sdk = window.ysdk;
+        if (sdk?.adv && typeof sdk.adv.showRewardedVideo === 'function') {
+            sdk.adv.showRewardedVideo({
                 callbacks: {
                     onOpen: () => { console.debug('Video ad open.'); },
                     onRewarded: () => {
