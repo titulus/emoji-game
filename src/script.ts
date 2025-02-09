@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let emojiStats: { [key: string]: number } = {};
     let isSuspended: boolean = false;
     let isPaused: boolean = false;
+    let isFullScreenAdShowing: boolean = false;
     let progressBarValue: number = 0;
     let progressIntervalID: number;
     let level: number = 1;
@@ -173,10 +174,20 @@ document.addEventListener('DOMContentLoaded', () => {
             progressBarValue = Math.min(progressBarValue + adjustedValue, 100);
             updateProgressBar();
             if (progressBarValue === 100) {
-                level++;
-                resetProgress(10);
-                updateLevelEmojis();
-                showLevelTransition();
+                const nextLevel = level + 1;
+                if (isBonusLevel(nextLevel)) {
+                    showFullscreenAd(() => {
+                        level = nextLevel;
+                        resetProgress(10);
+                        updateLevelEmojis();
+                        showLevelTransition();
+                    });
+                } else {
+                    level = nextLevel;
+                    resetProgress(10);
+                    updateLevelEmojis();
+                    showLevelTransition();
+                }
             }
         } else {
             // Final level reached: lock progress bar at 100%.
@@ -409,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function isGameRunning(): boolean {
-        return gameStarted && !isPaused && !isSuspended;
+        return gameStarted && !isPaused && !isSuspended && !isFullScreenAdShowing;
     }
 
     function runGame() {
@@ -552,6 +563,39 @@ document.addEventListener('DOMContentLoaded', () => {
             resumeGame();
         }
     };
+
+    function showFullscreenAd(onComplete?: () => void) {
+        if (!isGameRunning()) return;
+        
+        isFullScreenAdShowing = true;
+        holdGame();
+        
+        sdkManager.showFullscreenAdv({
+            onOpen: () => {
+                console.debug('Fullscreen ad opened');
+            },
+            onClose: (wasShown) => {
+                console.debug('Fullscreen ad closed, wasShown:', wasShown);
+                isFullScreenAdShowing = false;
+                if (onComplete) {
+                    onComplete();
+                }
+                runGame();
+            },
+            onError: (error) => {
+                console.error('Fullscreen ad error:', error);
+                isFullScreenAdShowing = false;
+                if (onComplete) {
+                    onComplete();
+                }
+                runGame();
+            }
+        });
+    }
+
+    function isBonusLevel(level: number): boolean {
+        return isSpeedLevel(level) || isSlowLevel(level);
+    }
 
     uiManager.onStartButtonClick(handleStartButton);
     uiManager.onRestartButtonClick(handleRestartButton);

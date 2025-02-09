@@ -14,6 +14,13 @@ interface YaGamesSDK {
                 onError?: (error: any) => void;
             };
         }) => void;
+        showFullscreenAdv: (config: {
+            callbacks: {
+                onClose?: (wasShown: boolean) => void;
+                onOpen?: () => void;
+                onError?: (error: any) => void;
+            };
+        }) => void;
     };
     isAvailableMethod: (method: string) => Promise<boolean>;
     setLeaderboardScore: (leaderboardName: string, score: number) => Promise<void>;
@@ -68,6 +75,19 @@ export class SDKManager {
         const sdk = this.getSDK();
         if (sdk?.adv && typeof sdk.adv.showRewardedVideo === 'function') {
             sdk.adv.showRewardedVideo({ callbacks });
+            return true;
+        }
+        return false;
+    }
+
+    showFullscreenAdv(callbacks: {
+        onClose?: (wasShown: boolean) => void;
+        onOpen?: () => void;
+        onError?: (error: any) => void;
+    }): boolean {
+        const sdk = this.getSDK();
+        if (sdk?.adv && typeof sdk.adv.showFullscreenAdv === 'function') {
+            sdk.adv.showFullscreenAdv({ callbacks });
             return true;
         }
         return false;
