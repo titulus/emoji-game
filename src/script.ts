@@ -209,6 +209,52 @@ document.addEventListener('DOMContentLoaded', () => {
         updateProgressBar();
     }
 
+    
+        
+    function handleBadEmojiInteraction(rect: DOMRect) {
+        audioManager.playBadClickSound();
+        // Negative effects for bad emojis
+        createParticles(rect.left, rect.top, true);
+        // Decrease score and progressbar
+        updateScore(-Math.round(score * 0.1));
+        decrementProgress(progressBarValue * 0.5);
+    }
+    
+    function handleBonusEmojiInteraction(rect: DOMRect, emojiType: string) {
+        audioManager.playBonusClickSound();
+        // Add bonus emoji styling
+        createParticles(rect.left, rect.top, false);
+    
+        if (emojiType === "📦") {
+            // Temporarily increase spawn frequency
+            setTemporarySpawnDelay();
+            setTimeout(resetSpawnDelay, 1000);
+        } else if (emojiType === "🧨") {
+            // Bonus emoji logic: explode all bad emojis without affecting score, level, or progress
+            document.querySelectorAll<HTMLDivElement>('.bad-emoji').forEach(badEmoji => {
+                const rectBad = badEmoji.getBoundingClientRect();
+                createParticles(rectBad.left, rectBad.top, true);
+                badEmoji.remove();
+            });
+        }
+    }
+    
+    function handleGoodEmojiInteraction(rect: DOMRect, selectedEmoji: string, size: number, duration: number) {
+        audioManager.playClickSound();
+        createParticles(rect.left, rect.top, false);
+    
+        // Calculate points (1-10) based on size and speed
+        // size range: 1-3 (smaller = better)
+        // duration range: 3-8 (shorter = better)
+        const sizeScore = (3 - size) / 2; // 0 to 1
+        const speedScore = (8 - duration) / 5; // 0 to 1
+        const multiplier = emojiMultipliers[selectedEmoji] || 1;
+        const points = Math.max(1, Math.min(10, Math.ceil((sizeScore + speedScore) * 7))) * multiplier;
+    
+        updateScore(points);
+        incrementProgress(points);
+    }
+
     function spawnEmoji() {
         if (!gameActive) return;
 
@@ -270,45 +316,21 @@ document.addEventListener('DOMContentLoaded', () => {
         
             const rect = emoji.getBoundingClientRect();
         
-            if (emoji.classList.contains('bad-emoji')) {
-                audioManager.playBadClickSound();
-                // Negative effects for bad emojis
-                createParticles(rect.left, rect.top, true);
-                // Decrease score and progressbar
-                updateScore(-Math.round(score * 0.1));
-                decrementProgress(progressBarValue * 0.5);
-            } else if (emoji.textContent === "🧨" || emoji.textContent === "📦") {
-                audioManager.playBonusClickSound();
-                // Add bonus emoji styling
-                createParticles(rect.left, rect.top, false);
-                emoji.remove();
-        
-                if (emoji.textContent === "📦") {
-                    // Temporarily increase spawn frequency
-                    setTemporarySpawnDelay();
-                    setTimeout(resetSpawnDelay, 1000);
-                } else if (emoji.textContent === "🧨") {
-                    // Bonus emoji logic: explode all bad emojis without affecting score, level, or progress
-                    document.querySelectorAll<HTMLDivElement>('.bad-emoji').forEach(badEmoji => {
-                        const rectBad = badEmoji.getBoundingClientRect();
-                        createParticles(rectBad.left, rectBad.top, true);
-                        badEmoji.remove();
-                    });
-                }
-            } else {
-                audioManager.playClickSound();
-                createParticles(rect.left, rect.top, false);
-        
-                // Calculate points (1-10) based on size and speed
-                // size range: 1-3 (smaller = better)
-                // duration range: 3-8 (shorter = better)
-                const sizeScore = (3 - size) / 2; // 0 to 1
-                const speedScore = (8 - duration) / 5; // 0 to 1
-                const multiplier = emojiMultipliers[selectedEmoji] || 1;
-                const points = Math.max(1, Math.min(10, Math.ceil((sizeScore + speedScore) * 7))) * multiplier;
-        
-                updateScore(points);
-                incrementProgress(points);
+            switch (emoji.textContent) {
+                case "💀":
+                case "☠️":
+                case "💩":
+                    handleBadEmojiInteraction(rect);
+                    break;
+                case "🧨":
+                    handleBonusEmojiInteraction(rect, "🧨");
+                    break;
+                case "📦":
+                    handleBonusEmojiInteraction(rect, "📦");
+                    break;
+                default:
+                    handleGoodEmojiInteraction(rect, selectedEmoji, size, duration);
+                    break;
             }
         
             // Update emoji stats
@@ -326,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
         emoji.addEventListener('animationend', () => {
             emoji.remove();
         });
-        }
+    }
 
     function calculateSpawnDelay() {
         const baseMin = 800;
