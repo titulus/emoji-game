@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '🏆'
     ];
     const badEmojis: string[] = ['💀', '☠️', '💩'];
-    const bonusEmojis: string[] = ['🧨', '📦'];
+    const bonusEmojis: string[] = ['🧨', '📦', '🚀', '🐌'];
     const particles: string[] = ['🌟', '✨', '⭐', '🔅', '🔆'];
 
     function generateFibonacciSequence(length: number): number[] {
@@ -236,6 +236,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 createParticles(rectBad.left, rectBad.top, true);
                 badEmoji.remove();
             });
+        } else if (emojiType === "🚀") {
+            setTemporarySpeed(true);
+            setTimeout(() => setTemporarySpeed(false), 5000);
+        } else if (emojiType === "🐌") {
+            setTemporarySlow(true);
+            setTimeout(() => setTemporarySlow(false), 5000);
         }
     }
     
@@ -306,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const duration = Math.random() * 5 + 3;
         emoji.dataset.duration = duration.toString();
-        emoji.style.animationDuration = `${isSpeedLevel(level) ? duration / 2 : (isSlowLevel(level) ? duration * 2 : duration)}s`;
+        emoji.style.animationDuration = `${temporarySpeed ? duration / 2 : (temporarySlow ? duration * 2 : (isSpeedLevel(level) ? duration / 2 : (isSlowLevel(level) ? duration * 2 : duration)))}s`;
          
         const handleEmojiInteraction = (e: Event) => {
             if (!gameActive) return;
@@ -323,10 +329,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     handleBadEmojiInteraction(rect);
                     break;
                 case "🧨":
-                    handleBonusEmojiInteraction(rect, "🧨");
-                    break;
                 case "📦":
-                    handleBonusEmojiInteraction(rect, "📦");
+                case "🚀":
+                case "🐌":
+                    handleBonusEmojiInteraction(rect, emoji.textContent);
                     break;
                 default:
                     handleGoodEmojiInteraction(rect, selectedEmoji, size, duration);
@@ -372,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function scheduleNextEmoji() {
         if (!gameActive) return;
-        const delay = isSpeedLevel(level) ? (temporarySpawnDelay ? 5 : calculateSpawnDelay() / 2) : (isSlowLevel(level) ? (temporarySpawnDelay ? 20 : calculateSpawnDelay() * 2) : (temporarySpawnDelay ? 10 : calculateSpawnDelay()));
+        const delay = temporarySpeed ? (temporarySpawnDelay ? 5 : calculateSpawnDelay() / 2) : (temporarySlow ? (temporarySpawnDelay ? 20 : calculateSpawnDelay() * 2) : (isSpeedLevel(level) ? (temporarySpawnDelay ? 5 : calculateSpawnDelay() / 2) : (isSlowLevel(level) ? (temporarySpawnDelay ? 20 : calculateSpawnDelay() * 2) : (temporarySpawnDelay ? 10 : calculateSpawnDelay()))));
         setTimeout(() => {
             spawnEmoji();
             scheduleNextEmoji();
@@ -389,6 +395,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function isSlowLevel(level: number): boolean {
         return level % 10 === 0;
+    }
+    
+    let temporarySpeed: boolean = false;
+    let temporarySlow: boolean = false;
+    
+    function setTemporarySpeed(value: boolean) {
+        temporarySpeed = value;
+    }
+    
+    function setTemporarySlow(value: boolean) {
+        temporarySlow = value;
     }
     
     function resetSpawnDelay() {
