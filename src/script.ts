@@ -333,10 +333,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const y = window.innerHeight;
         emoji.style.left = `${x}px`;
         emoji.style.top = `${y}px`;
-
         const duration = Math.random() * 5 + 3;
         emoji.dataset.duration = duration.toString();
-        emoji.style.animationDuration = `${temporarySpeed ? duration / 2 : (temporarySlow ? duration * 2 : (isSpeedLevel(level) ? duration / 2 : (isSlowLevel(level) ? duration * 2 : duration)))}s`;
+        const speedMultiplier = Math.pow(1.02, level - 1);
+        emoji.style.animationDuration = `${temporarySpeed ? duration / (2 * speedMultiplier) : (temporarySlow ? duration * 2 * speedMultiplier : (isSpeedLevel(level) ? duration / (2 * speedMultiplier) : (isSlowLevel(level) ? duration * 2 * speedMultiplier : duration / speedMultiplier))) }s`;
+
          
         const handleEmojiInteraction = (e: Event) => {
             if (!gameActive) return;
