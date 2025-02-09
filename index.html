@@ -7,19 +7,25 @@
     <link rel="stylesheet" href="styles.css">
     <script src="/sdk.js"></script>
     <script>
-        YaGames.init().then(ysdk => {
-            console.debug('SDK initialized');
-            window.ysdk = ysdk;
-            
-            ysdk.features.LoadingAPI?.ready();
-            console.debug('SDK ready');
+        if (window.YaGames) {
+            YaGames.init().then(ysdk => {
+                console.debug('SDK initialized');
+                window.ysdk = ysdk;
+                
+                ysdk.features.LoadingAPI?.ready();
+                console.debug('SDK ready');
 
-            document.getElementsByTagName('body')[0].style.display = '';
-            console.debug('body shown');
+                document.getElementsByTagName('body')[0].style.display = '';
+                console.debug('body shown');
 
-            ysdk.adv.showBannerAdv();
-            console.debug('Sticky banner shown');
-        });
+                ysdk.adv.showBannerAdv();
+                console.debug('Sticky banner shown');
+            });
+        } else {
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementsByTagName('body')[0].style.display = '';
+            });
+        }
     </script>
 </head>
 <body style="display: none;" unselectable="on" onselectstart="return false;">
