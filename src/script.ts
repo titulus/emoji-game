@@ -13,17 +13,6 @@ interface HTMLDivElement extends Element {
 document.addEventListener('DOMContentLoaded', () => {
     // DOM elements
     const emojiContainer = document.querySelector('.emoji-container') as HTMLDivElement;
-    const scoreElement = document.getElementById('score') as HTMLSpanElement;
-    const gameOverScreen = document.querySelector('.game-over') as HTMLDivElement;
-    const finalScoreElement = document.getElementById('final-score') as HTMLSpanElement;
-    const restartButton = document.getElementById('restart-button') as HTMLButtonElement;
-    const restartAdButton = document.getElementById('restart-ad-button') as HTMLButtonElement;
-    const soundToggleButton = document.getElementById('sound-toggle') as HTMLButtonElement;
-    const startScreen = document.getElementById('start-screen') as HTMLDivElement;
-    const startButton = document.getElementById('start-button') as HTMLButtonElement;
-    const progressBar = document.getElementById('progress-bar') as HTMLDivElement;
-    const currentEmojiElement = document.getElementById('current-emoji') as HTMLSpanElement;
-    const nextEmojiElement = document.getElementById('next-emoji') as HTMLSpanElement;
 
     const goodEmojis: string[] = [
         '🍓', '🍎', '🍑', '🥭', '🍊', '🍍', '🍌', '🍋', '🍐', '🍏', '🥝', '🥑', '🍈', '🥥', '🍇',
@@ -446,14 +435,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sdkManager.stopGameplay();
         sdkManager.submitScore(score);
     }
-
-    document.addEventListener('selectstart', (e) => {
-        e.preventDefault();
-    });
-
-    document.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-    });
 
     // Pause and resume game on visibility change
     uiManager.setupWindowEvents(pauseGame, resumeGame);
