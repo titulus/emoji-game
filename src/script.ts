@@ -3,8 +3,6 @@ import { SDKManager } from './sdk';
 import { UIManager } from './ui';
 
 interface HTMLDivElement extends Element {
-    removalTarget?: number;
-    removalRemaining?: number;
     style: CSSStyleDeclaration;
     dataset: DOMStringMap;
     innerText: string;
@@ -43,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const uiManager = new UIManager();
     let score: number = 0;
     let gameActive: boolean = false;
-    let emojiRemovalIntervalID: number;
     let emojiStats: { [key: string]: number } = {};
     let isPaused: boolean = false;
     let progressBarValue: number = 0;
@@ -66,19 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isPaused && gameActive) {
             isPaused = true;
             gameActive = false;
-            clearInterval(emojiRemovalIntervalID);
             clearInterval(progressIntervalID);
             document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
                 emoji.style.animationPlayState = 'paused';
-                if (emoji.removalTarget) {
-                    const remaining = emoji.removalTarget - Date.now();
-                    if (remaining > 0) {
-                        emoji.removalRemaining = remaining;
-                        delete emoji.removalTarget;
-                    } else {
-                        emoji.remove();
-                    }
-                }
             });
             sdkManager.stopGameplay();
         }
@@ -91,14 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
                 emoji.style.animationPlayState = 'running';
                 const duration = parseFloat(emoji.dataset.duration || '0');
-                if (duration) {
-                    const fullDurationMs = duration * 1000;
-                    const currentTop = emoji.getBoundingClientRect().top;
-                    const remainingTime = (currentTop / window.innerHeight) * fullDurationMs;
-                    emoji.removalTarget = Date.now() + remainingTime;
-                }
             });
-            emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100) as unknown as number; // Set a new interval
             progressIntervalID = setInterval(() => {
                 decrementProgress();
             }, 1000) as unknown as number; // Restart progress interval
@@ -229,18 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateProgressBar();
     }
 
-    // Global checker for auto-removal of emojis using removalTarget timestamps
-    function checkEmojiRemovals() {
-        // Only check removals when not paused
-        if (isPaused) return;
-        const now = Date.now();
-        document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
-            if (emoji.removalTarget && now >= emoji.removalTarget) {
-                emoji.remove();
-            }
-        });
-    }
-
     function spawnEmoji() {
         if (!gameActive) return;
 
@@ -294,9 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
         emoji.dataset.duration = duration.toString();
         emoji.style.animationDuration = `${duration}s`;
          
-        // Set removal target based on spawn duration
-        emoji.removalTarget = Date.now() + duration * 1000;
-
         const handleEmojiInteraction = (e: Event) => {
             if (!gameActive) return;
             if (e.cancelable) {
@@ -356,7 +321,12 @@ document.addEventListener('DOMContentLoaded', () => {
         emoji.addEventListener('touchstart', handleEmojiInteraction, { passive: false });
 
         emojiContainer.appendChild(emoji);
-    }
+
+        // Remove emoji when it reaches the top of the screen
+        emoji.addEventListener('animationend', () => {
+            emoji.remove();
+        });
+        }
 
     function calculateSpawnDelay() {
         const baseMin = 800;
@@ -417,14 +387,12 @@ document.addEventListener('DOMContentLoaded', () => {
         updateLevelEmojis();
         // Start game loops
         scheduleNextEmoji();
-        emojiRemovalIntervalID = setInterval(checkEmojiRemovals, 100) as unknown as number;
     
         sdkManager.startGameplay();
     }
 
     function endGame() {
         gameActive = false;
-        clearInterval(emojiRemovalIntervalID);
 
         const emojis = document.querySelectorAll<HTMLDivElement>('.emoji');
         emojis.forEach(emoji => emoji.remove());
