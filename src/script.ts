@@ -13,13 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const emojiContainer = document.querySelector('.emoji-container') as HTMLDivElement;
 
     const goodEmojis: string[] = [
-        '🫐', '🍇', '🍆', '🪻',
-        '💐', '🌷', '🌸', '🌺', '🌸', '🌺',
         '🍓', '🍎', '🍒', '🍅', '🌶️',
+        '💐', '🌷', '🌸', '🌺', '🌸', '🌺',
         '🍑', '🥭', '🍊', '🥕', '🍂',
         '🍍', '🍌', '🍋', '🌽', '🌻', '🌾', '🌾',
         '🍐', '🍏', '🥝', '🥑', '🥬', '🥦', '🥒', '🌿', '🍀', '🍃', '🌳', '🌲',
         '🥥', '🥔', '🧄', '🧅',
+        '🫐', '🍇', '🍆', '🪻',
         '🐙', '🐷',
         '🦁', '🦒', '🐶', '🐹', '🦊', '🐯', '🐻', '🐵', '🦅', '🦉', '🐿️', '🦙',
         '🐸', '🐢', '🐍', '🐉',
@@ -303,8 +303,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     emoji: badEmojis[Math.floor(Math.random() * badEmojis.length)]
                 };
             }
-
-            const availableGoodEmojis = goodEmojis.slice(0, Math.min(level, goodEmojis.length));
+    
+            let availableGoodEmojis: string[];
+            if (level < 20) {
+                availableGoodEmojis = goodEmojis.slice(0, Math.min(level, goodEmojis.length));
+            } else {
+                availableGoodEmojis = goodEmojis.slice(Math.max(0, level - 20), level);
+            }
             return {
                 type: 'good',
                 emoji: availableGoodEmojis[Math.floor(Math.random() * availableGoodEmojis.length)]
