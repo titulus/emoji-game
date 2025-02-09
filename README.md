@@ -82,6 +82,81 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
   - Controls game screens (start, game over)
   - Provides type-safe event handling for UI interactions
 
+### UI Module (`src/ui.ts`)
+
+The `UIManager` class manages the game's user interface elements and their interactions.
+
+-   **`constructor()`**:
+    -   Initializes the UI elements by getting references to them from the DOM.
+    -   Attaches event listeners to prevent default behaviors like text selection and context menus.
+-   **`updateScore(score: number)`**:
+    -   Updates the score displayed on the screen.
+-   **`updateFinalScore(score: number)`**:
+    -   Updates the final score displayed on the game over screen.
+-   **`showGameOver()`**:
+    -   Displays the game over screen.
+-   **`hideGameOver()`**:
+    -   Hides the game over screen.
+-   **`isGameOverVisible(): boolean`**:
+    -   Returns whether the game over screen is currently visible.
+-   **`hideStartScreen()`**:
+    -   Hides the start screen.
+-   **`updateProgressBar(value: number, level: number, maxLevel: number)`**:
+    -   Updates the progress bar's width based on the current progress value.
+    -   If the level is at the maximum, the progress bar turns white.
+-   **`updateLevelEmojis(currentEmoji: string, nextEmoji: string)`**:
+    -   Updates the displayed emojis representing the current and next levels.
+    -   Updates the text content of the restart ad button to include the current emoji.
+-   **`updateSoundButton(isEnabled: boolean)`**:
+    -   Updates the sound toggle button's text to reflect whether sound is enabled or disabled.
+-   **`onStartButtonClick(handler: (e: Event) => void)`**:
+    -   Attaches an event listener to the start button that triggers the provided handler function when the button is clicked or tapped.
+-   **`onRestartButtonClick(handler: (e: Event) => void)`**:
+    -   Attaches an event listener to the restart button that triggers the provided handler function when the button is clicked or tapped.
+-   **`onRestartAdButtonClick(handler: (e: Event) => void)`**:
+    -   Attaches an event listener to the restart ad button that triggers the provided handler function when the button is clicked or tapped.
+-   **`onSoundButtonClick(handler: (e: Event) => void)`**:
+    -   Attaches an event listener to the sound toggle button that triggers the provided handler function when the button is clicked or tapped.
+-   **`setupWindowEvents(onPause: () => void, onResume: () => void)`**:
+    -   Sets up event listeners for window focus and blur events to pause and resume the game automatically.
+    -   Also listens for the `visibilitychange` event to handle tab switching.
+
+### Audio Module (`src/audio.ts`)
+
+The `AudioManager` class manages all audio-related functionality using the Web Audio API.
+
+-   **`init()`**:
+    -   Initializes the `AudioContext` if it hasn't been already.
+    -   Resumes the `AudioContext` if it's in a suspended state.
+-   **`toggleSound()`**:
+    -   Toggles the soundEnabled flag and returns the new state.
+-   **`isSoundEnabled(): boolean`**:
+    -   Returns the current state of the soundEnabled flag.
+-   **`playSpawnSound(size: number)`**:
+    -   Plays a sine wave sound that is modulated by the size of the emoji.
+-   **`playClickSound()`**:
+    -   Plays a triangle wave sound when a good emoji is clicked.
+-   **`playBadClickSound()`**:
+    -   Plays a sawtooth wave sound when a bad emoji is clicked.
+-   **`playBonusClickSound()`**:
+    -   Plays an enhanced triangle wave sound when a bonus emoji is clicked.
+
+### SDK Module (`src/sdk.ts`)
+
+The `SDKManager` class handles all interactions with the YaGames SDK.
+
+-   **`startGameplay()`**:
+    -   Calls the `start` method of the `GameplayAPI` to track the start of the game.
+-   **`stopGameplay()`**:
+    -   Calls the `stop` method of the `GameplayAPI` to track the end of the game.
+-   **`submitScore(score: number)`**:
+    -   Submits the player's score to the leaderboard.
+    -   Checks if the `leaderboards.setLeaderboardScore` method is available before submitting.
+-   **`showRewardedVideo(callbacks: { onOpen?: () => void; onRewarded?: () => void; onClose?: () => void; onError?: (error: any) => void; }): boolean`**:
+    -   Shows a rewarded video ad to the player.
+    -   Returns `true` if the ad was successfully shown, `false` otherwise.
+    -   The `callbacks` object contains functions to be called when the ad is opened, rewarded, closed, or encounters an error.
+
 ## Codestyle and Architecture Recommendations
 
 1. **Consistent Naming Conventions**:
