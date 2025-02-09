@@ -11,12 +11,17 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 - **Dynamic Spawning**:
   - Emojis appear randomly from the bottom of the screen.
   - Spawn intervals decrease as your score increases, escalating the game's challenge.
+  - Spawn rates are affected by level type (speed/slow) and bonus effects.
+  - Bad emoji probability increases with level progression (10% + level progression).
+  - Bonus emojis have a 1% chance to appear.
 - **Emoji Types**:
   - **Good Emojis**: A variety of fruits, vegetables, and floral icons, with a trophy (🏆) available at advanced levels.
   - **Bad Emojis**: Identified as 💀, ☠️, and 💩, which penalize your score and progress.
   - **Bonus Emoji**:
     - Represented by 🧨, which, when clicked, vaporizes all bad emojis on screen without affecting the player.
     - Represented by 📦, which, when clicked, temporarily increases the frequency of emoji spawning to 10ms for 1 second and then returns to the normal frequency for another second.
+    - Represented by 🚀, which, when clicked, temporarily increases the speed of all emojis for 5 seconds.
+    - Represented by 🐌, which, when clicked, temporarily decreases the speed of all emojis for 5 seconds.
 - **Audio Feedback**:
   - Uses the Web Audio API to generate dynamic sound effects.
   - Different sound profiles for emoji spawning, clicking good emojis (triangle wave), bad emoji clicks (sawtooth wave), and bonus emoji interactions.
@@ -28,6 +33,12 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 - **YaGames SDK Integration**:
   - Initializes the YaGames SDK on load to support additional features such as gameplay state management and leaderboard score submissions.
   - Supports rewarded video ads for resume lost game.
+- **Level System**:
+  - Each level features different emojis from the good emoji pool.
+  - Every 5th level (level % 10 === 5) is a speed level where emojis move faster.
+  - Every 10th level (level % 10 === 0) is a slow level where emojis move slower.
+  - Bad emoji probability increases with level progression.
+  - Level transitions are marked with visual effects and emoji changes.
 
 ## How to Play
 
@@ -52,8 +63,19 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 ## Technical Details
 
 - **Emoji Spawning**:
-  - Spawn intervals dynamically adjust from approximately 800ms to 100ms based on in-game score.
+  - Base spawn intervals dynamically adjust from approximately 800ms to 100ms based on in-game score.
   - The spawn delay is determined by a progression algorithm that factors in the player's score.
+  - Speed modifiers:
+    - Speed levels (every 5th level): 2x faster
+    - Slow levels (every 10th level): 2x slower
+    - 🚀 bonus: 2x faster for 5 seconds
+    - 🐌 bonus: 2x slower for 5 seconds
+    - 📦 bonus: Fixed 10ms delay for 1 second
+  - Emoji pool selection:
+    - For levels < 20: Available emojis are limited to current level index
+    - For levels >= 20: Available emojis are from (level-20) to level index
+    - Bad emoji probability: 10% + (level-1) * (0.5/(goodEmojis.length-1))
+    - Bonus emoji probability: 1%
 - **Audio System**:
   - Implemented in a separate `AudioManager` class for better code organization
   - **Spawn Sounds**: Sine wave sounds with frequency modulated by the emoji's size
@@ -64,6 +86,9 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 - **Scoring & Difficulty**:
   - Points are computed from a combination of emoji size (smaller emojis yield higher points) and speed of movement.
   - Each good emoji has a Fibonacci-based multiplier, adding a unique scaling factor to the score.
+  - Bad emojis decrease score by 10% and progress bar by 50%.
+  - Progress bar fills based on points earned, with each level requiring different amounts based on the current emoji's Fibonacci multiplier.
+  - Game ends when progress bar reaches 0.
 - **Animation & Particle System**:
   - CSS animations control the movement of emojis.
   - Particle effects are generated on interactions to create a dynamic visual burst.
@@ -86,76 +111,142 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 
 The `UIManager` class manages the game's user interface elements and their interactions.
 
--   **`constructor()`**:
-    -   Initializes the UI elements by getting references to them from the DOM.
-    -   Attaches event listeners to prevent default behaviors like text selection and context menus.
--   **`updateScore(score: number)`**:
-    -   Updates the score displayed on the screen.
--   **`updateFinalScore(score: number)`**:
-    -   Updates the final score displayed on the game over screen.
--   **`showGameOver()`**:
-    -   Displays the game over screen.
--   **`hideGameOver()`**:
-    -   Hides the game over screen.
--   **`isGameOverVisible(): boolean`**:
-    -   Returns whether the game over screen is currently visible.
--   **`hideStartScreen()`**:
-    -   Hides the start screen.
--   **`updateProgressBar(value: number, level: number, maxLevel: number)`**:
-    -   Updates the progress bar's width based on the current progress value.
-    -   If the level is at the maximum, the progress bar turns white.
--   **`updateLevelEmojis(currentEmoji: string, nextEmoji: string)`**:
-    -   Updates the displayed emojis representing the current and next levels.
-    -   Updates the text content of the restart ad button to include the current emoji.
--   **`updateSoundButton(isEnabled: boolean)`**:
-    -   Updates the sound toggle button's text to reflect whether sound is enabled or disabled.
--   **`onStartButtonClick(handler: (e: Event) => void)`**:
-    -   Attaches an event listener to the start button that triggers the provided handler function when the button is clicked or tapped.
--   **`onRestartButtonClick(handler: (e: Event) => void)`**:
-    -   Attaches an event listener to the restart button that triggers the provided handler function when the button is clicked or tapped.
--   **`onRestartAdButtonClick(handler: (e: Event) => void)`**:
-    -   Attaches an event listener to the restart ad button that triggers the provided handler function when the button is clicked or tapped.
--   **`onSoundButtonClick(handler: (e: Event) => void)`**:
-    -   Attaches an event listener to the sound toggle button that triggers the provided handler function when the button is clicked or tapped.
--   **`setupWindowEvents(onPause: () => void, onResume: () => void)`**:
-    -   Sets up event listeners for window focus and blur events to pause and resume the game automatically.
-    -   Also listens for the `visibilitychange` event to handle tab switching.
+-   **Game Interface**:
+    - Score display (🎯) showing current points
+    - Progress bar indicating level completion
+    - Current level emoji indicator
+    - Next level emoji preview
+    - Sound toggle button (🔊/🔈)
+    - Pause button (⏸️)
 
-### Audio Module (`src/audio.ts`)
+-   **Pause Menu**:
+    - Resume button (⏯️)
+    - Sound toggle button
+    - Semi-transparent overlay
 
-The `AudioManager` class manages all audio-related functionality using the Web Audio API.
+-   **Game Over Screen**:
+    - Final score display (🏆)
+    - Emoji statistics showing collected items
+    - Regular restart button (🔄)
+    - Ad-based restart button (📺)
 
--   **`init()`**:
-    -   Initializes the `AudioContext` if it hasn't been already.
-    -   Resumes the `AudioContext` if it's in a suspended state.
--   **`toggleSound()`**:
-    -   Toggles the soundEnabled flag and returns the new state.
--   **`isSoundEnabled(): boolean`**:
-    -   Returns the current state of the soundEnabled flag.
--   **`playSpawnSound(size: number)`**:
-    -   Plays a sine wave sound that is modulated by the size of the emoji.
--   **`playClickSound()`**:
-    -   Plays a triangle wave sound when a good emoji is clicked.
--   **`playBadClickSound()`**:
-    -   Plays a sawtooth wave sound when a bad emoji is clicked.
--   **`playBonusClickSound()`**:
-    -   Plays an enhanced triangle wave sound when a bonus emoji is clicked.
+-   **Level Transition**:
+    - Large emoji animation
+    - Visual effects for level change
+    - Different animations for speed/slow levels
+
+-   **Progress System**:
+    - Dynamic progress bar color
+    - White color indication for max level
+    - Visual feedback for progress changes
+
+-   **Methods**:
+    -   **`constructor()`**:
+        -   Initializes UI elements by getting references from DOM
+        -   Sets up event listeners to prevent text selection and context menu
+    -   **Score Management**:
+        -   `updateScore(score: number)`: Updates current score display
+        -   `updateFinalScore(score: number)`: Updates final score on game over screen
+    -   **Screen Management**:
+        -   `showGameOver()`: Displays game over screen
+        -   `hideGameOver()`: Hides game over screen
+        -   `isGameOverVisible()`: Checks if game over screen is visible
+        -   `hideStartScreen()`: Hides start screen
+        -   `showPauseMenu()`: Shows pause menu
+        -   `hidePauseMenu()`: Hides pause menu
+        -   `isPauseMenuVisible()`: Checks if pause menu is visible
+    -   **UI Updates**:
+        -   `updateProgressBar(value: number, level: number, maxLevel: number)`: Updates progress bar width and color
+        -   `updateLevelEmojis(currentEmoji: string, nextEmoji: string)`: Updates level emoji displays
+        -   `updateSoundButton(isEnabled: boolean)`: Updates sound button icon
+    -   **Event Handlers**:
+        -   `onStartButtonClick(handler: (e: Event) => void)`: Start button click handler
+        -   `onRestartButtonClick(handler: (e: Event) => void)`: Restart button click handler
+        -   `onRestartAdButtonClick(handler: (e: Event) => void)`: Ad restart button click handler
+        -   `onSoundButtonClick(handler: (e: Event) => void)`: Sound toggle click handler
+        -   `onPauseButtonClick(handler: (e: Event) => void)`: Pause button click handler
+        -   `onResumeButtonClick(handler: (e: Event) => void)`: Resume button click handler
+        -   `setupWindowEvents(onPause: () => void, onResume: () => void)`: Window focus/blur handlers
 
 ### SDK Module (`src/sdk.ts`)
 
 The `SDKManager` class handles all interactions with the YaGames SDK.
 
--   **`startGameplay()`**:
-    -   Calls the `start` method of the `GameplayAPI` to track the start of the game.
--   **`stopGameplay()`**:
-    -   Calls the `stop` method of the `GameplayAPI` to track the end of the game.
--   **`submitScore(score: number)`**:
-    -   Submits the player's score to the leaderboard.
-    -   Checks if the `leaderboards.setLeaderboardScore` method is available before submitting.
--   **`showRewardedVideo(callbacks: { onOpen?: () => void; onRewarded?: () => void; onClose?: () => void; onError?: (error: any) => void; }): boolean`**:
-    -   Shows a rewarded video ad to the player.
-    -   Returns `true` if the ad was successfully shown, `false` otherwise.
-    -   The `callbacks` object contains functions to be called when the ad is opened, rewarded, closed, or encounters an error.
+-   **Core SDK Methods**:
+    -   **`getSDK(): YaGamesSDK | undefined`**:
+        -   Private method to get SDK instance
+        -   Returns the current YaGames SDK instance if available
+    -   **`startGameplay()`**:
+        -   Starts gameplay tracking session via GameplayAPI
+    -   **`stopGameplay()`**:
+        -   Stops gameplay tracking session via GameplayAPI
+    -   **`submitScore(score: number)`**:
+        -   Submits score to leaderboard named 'leader'
+        -   Checks method availability before submission
+        -   Handles errors and logs results
+
+-   **Advertisement Methods**:
+    -   **`showRewardedVideo(callbacks)`**:
+        -   Shows rewarded video advertisement
+        -   Accepts callbacks for: onOpen, onRewarded, onClose, onError
+        -   Returns boolean indicating if ad was shown
+    -   **`showFullscreenAdv(callbacks)`**:
+        -   Shows fullscreen interstitial advertisement
+        -   Accepts callbacks for: onClose(wasShown), onOpen, onError
+        -   Returns boolean indicating if ad was shown
+
+-   **TypeScript Interfaces**:
+    -   Defines YaGamesSDK interface for type safety
+    -   Extends Window interface to include ysdk property
+    -   Provides type definitions for all SDK methods and callbacks
+
+### Audio Module (`src/audio.ts`)
+
+The `AudioManager` class manages all audio-related functionality using the Web Audio API.
+
+-   **Properties**:
+    -   `audioContext`: Manages Web Audio API context
+    -   `soundEnabled`: Controls global sound state
+
+-   **Core Audio Methods**:
+    -   **`init()`**:
+        -   Initializes AudioContext if not exists
+        -   Resumes AudioContext if suspended
+    -   **`getAudioContext(): AudioContext`**:
+        -   Private method to safely get AudioContext
+        -   Throws error if context not initialized
+    -   **`toggleSound(): boolean`**:
+        -   Toggles sound state on/off
+        -   Returns new sound state
+    -   **`isSoundEnabled(): boolean`**:
+        -   Returns current sound state
+
+-   **Sound Generation**:
+    -   **`playSpawnSound(size: number)`**:
+        -   Generates sine wave sound for emoji spawn
+        -   Frequency modulated by emoji size (880Hz / (size * 1.5))
+        -   0.3s duration with 0.05s attack and fade out
+    -   **`playClickSound()`**:
+        -   Generates triangle wave sound (880Hz)
+        -   0.15s duration with quick 0.02s attack
+        -   Used for good emoji clicks
+    -   **`playBadClickSound()`**:
+        -   Generates sawtooth wave sound (220Hz)
+        -   0.2s duration with 0.05s attack
+        -   Harsher tone for bad emoji clicks
+    -   **`playBonusClickSound()`**:
+        -   Generates enhanced triangle wave sound (1320Hz)
+        -   0.15s duration with quick 0.02s attack
+        -   Higher frequency for bonus emoji clicks
+
+-   **Sound Characteristics**:
+    -   All sounds use gain nodes for amplitude control
+    -   Each sound type has unique waveform and frequency
+    -   Volume levels adjusted for sound type:
+        - Spawn sounds: 0.1 gain
+        - Good clicks: 0.2 gain
+        - Bad clicks: 0.3 gain
+        - Bonus clicks: 0.4 gain
 
 ## Codestyle and Architecture Recommendations
 

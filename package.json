@@ -14,6 +14,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "vite build && copy sdk.js dist",
+    "build-prod": "vite build",
     "dev": "vite"
   },
   "keywords": [],
