@@ -1,5 +1,6 @@
 import { AudioManager } from './audio';
 import { SDKManager } from './sdk';
+import { UIManager } from './ui';
 
 interface HTMLDivElement extends Element {
     removalTarget?: number;
@@ -50,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Game variables
     const audioManager = new AudioManager();
     const sdkManager = new SDKManager();
+    const uiManager = new UIManager();
     let score: number = 0;
     let gameActive: boolean = false;
     let emojiRemovalIntervalID: number;
@@ -68,18 +70,15 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             nextIndex = currentIndex;
         }
-        currentEmojiElement.textContent = goodEmojis[currentIndex];
-        nextEmojiElement.textContent = goodEmojis[nextIndex];
-        restartAdButton.textContent = '📺→' + goodEmojis[currentIndex];
+        uiManager.updateLevelEmojis(goodEmojis[currentIndex], goodEmojis[nextIndex]);
     }
 
     function pauseGame() {
         if (!isPaused && gameActive) {
             isPaused = true;
             gameActive = false;
-            clearInterval(emojiRemovalIntervalID); // Clear the existing interval
-            clearInterval(progressIntervalID); // Clear progress interval
-            // Pause all emoji animations and freeze their removal timers
+            clearInterval(emojiRemovalIntervalID);
+            clearInterval(progressIntervalID);
             document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
                 emoji.style.animationPlayState = 'paused';
                 if (emoji.removalTarget) {
@@ -97,10 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function resumeGame() {
-        if (isPaused && !gameOverScreen.style.display.includes('flex')) {
+        if (isPaused && !uiManager.isGameOverVisible()) {
             isPaused = false;
             gameActive = true;
-            // For each emoji, restart removal timers with the remaining time
             document.querySelectorAll<HTMLDivElement>('.emoji').forEach(emoji => {
                 emoji.style.animationPlayState = 'running';
                 const duration = parseFloat(emoji.dataset.duration || '0');
@@ -122,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function toggleSound() {
         const isEnabled = audioManager.toggleSound();
-        soundToggleButton.textContent = isEnabled ? '🔊' : '🔇';
+        uiManager.updateSoundButton(isEnabled);
     }
 
     function createParticles(x: number, y: number, isBad: boolean = false) {
@@ -158,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (score < 0) {
             score = 0;
         }
-        scoreElement.textContent = score.toString();
+        uiManager.updateScore(score);
     }
     function showLevelTransition() {
         const transitionContainer = document.createElement('div');
@@ -204,15 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateProgressBar() {
-        if (progressBar) {
-            if (level >= goodEmojis.length) {
-                progressBar.style.width = '100%';
-                progressBar.style.setProperty('background', 'white', 'important');
-            } else {
-                progressBar.style.width = progressBarValue + '%';
-                progressBar.style.backgroundColor = '';
-            }
-        }
+        uiManager.updateProgressBar(progressBarValue, level, goodEmojis.length);
     }
     
     function incrementProgress(value: number = 1) {
@@ -426,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
         // Update UI
         updateScore();
-        gameOverScreen.style.display = 'none';
+        uiManager.hideGameOver();
         resetProgress();
         if (progressIntervalID) {
             clearInterval(progressIntervalID);
@@ -450,8 +440,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const emojis = document.querySelectorAll<HTMLDivElement>('.emoji');
         emojis.forEach(emoji => emoji.remove());
     
-        finalScoreElement.textContent = score.toString();
-        gameOverScreen.style.display = 'flex';
+        uiManager.updateFinalScore(score);
+        uiManager.showGameOver();
     
         sdkManager.stopGameplay();
         sdkManager.submitScore(score);
@@ -483,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.cancelable) e.preventDefault();
         audioManager.init(); // Initialize audio on first interaction
         startGame();
-        startScreen.style.display = 'none';
+        uiManager.hideStartScreen();
     };
     startButton.addEventListener('mousedown', handleStartButton);
     startButton.addEventListener('touchstart', handleStartButton, { passive: false });
@@ -525,4 +515,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     soundToggleButton.addEventListener('mousedown', handleSoundButton);
     soundToggleButton.addEventListener('touchstart', handleSoundButton, { passive: false });
+
+    uiManager.onStartButtonClick(handleStartButton);
+    uiManager.onRestartButtonClick(handleRestartButton);
+    uiManager.onRestartAdButtonClick(handleRestartAdButton);
+    uiManager.onSoundButtonClick(handleSoundButton);
 });

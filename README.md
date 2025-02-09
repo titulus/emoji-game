@@ -40,6 +40,15 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
 7. When the game ends, press the restart button (🔄) to play again.
 8. Optionally, watch a rewarded video ad to resume the game while preserving your current stats.
 
+## Files
+
+- `index.html`: Sets up the game interface and initializes the YaGames SDK.
+- `styles.css`: Contains the styling and animation definitions for the game.
+- `src/script.ts`: Implements the core game logic and emoji spawning mechanics.
+- `src/audio.ts`: Manages all audio-related functionality using Web Audio API.
+- `src/sdk.ts`: Handles all interactions with YaGames SDK.
+- `src/ui.ts`: Manages the game's user interface elements and their interactions.
+
 ## Technical Details
 
 - **Emoji Spawning**:
@@ -66,14 +75,12 @@ An interactive game where you catch good emojis and avoid bad ones to score poin
   - Manages leaderboard score submissions
   - Provides interface for rewarded video ads
   - Includes TypeScript type definitions for better type safety
-
-## Files
-
-- `index.html`: Sets up the game interface and initializes the YaGames SDK.
-- `styles.css`: Contains the styling and animation definitions for the game.
-- `src/script.ts`: Implements the core game logic, including emoji spawning, animations, and scoring.
-- `src/audio.ts`: Manages all audio-related functionality using Web Audio API, including sound effects for emoji spawning, clicking good/bad emojis, and bonus interactions.
-- `src/sdk.ts`: Handles all interactions with YaGames SDK, including gameplay tracking, leaderboard submissions, and rewarded video ads.
+- **UI System**:
+  - Implemented in a separate `UIManager` class for better code organization
+  - Manages all static UI elements defined in HTML
+  - Handles score displays, progress bar, and level indicators
+  - Controls game screens (start, game over)
+  - Provides type-safe event handling for UI interactions
 
 ## Codestyle and Architecture Recommendations
 
