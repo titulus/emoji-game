@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const emojiContainer = document.querySelector('.emoji-container') as HTMLDivElement;
 
     const goodEmojis: string[] = [
-        '🐷', '🐖', '🐽', '🦩', '🪱', '🦑', '🦀', '🦞', '🦐', '🐙' , 
+        '🐙' , '🦩', '🪱', '🦑', '🦀', '🦞', '🦐', 
         '🐥', '🐤', '🐣', '🐡', '🐆', '🦘', '🐪', '🐫', '🐕', '🦧', '🦁', '🐯', '🐶', '🐹', '🦊', '🐅', '🐝', 
         '🐂', '🐎', '🐒', '🦣', '🦬', '🐻', '🐵', '🦅', '🦉', '🐿️','🦌', '🦒', '🦔', 
         '🐸', '🪲', '🐢', '🐍', '🦎', '🐛', '🐊', '🦚',
@@ -42,18 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const bonusEmojis: string[] = ['🧨', '📦', '🚀', '🐌'];
     const particles: string[] = ['🌟', '✨', '⭐', '🔅', '🔆'];
 
-    function generateFibonacciSequence(length: number): number[] {
-        const sequence = [1, 1];
-        for (let i = 2; i < length; i++) {
-            sequence.push(sequence[i - 1] + sequence[i - 2]);
-        }
-        return sequence;
-    }
-    const emojiMultipliers: { [key: string]: number } = {};
-    const fibonacciSequence = generateFibonacciSequence(goodEmojis.length);
-    goodEmojis.forEach((emoji, index) => {
-        emojiMultipliers[emoji] = fibonacciSequence[index];
-    });
 
     // Game variables
     const audioManager = new AudioManager();
@@ -169,8 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function incrementProgress(value: number = 1) {
-        const currentEmojiCost = emojiMultipliers[goodEmojis[level - 1]] || 1;
-        const adjustedValue = value / currentEmojiCost;
+        const adjustedValue = value / level;
         if (level < goodEmojis.length) {
             progressBarValue = Math.min(progressBarValue + adjustedValue, 100);
             updateProgressBar();
@@ -256,8 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // duration range: 3-8 (shorter = better)
         const sizeScore = (3 - size) / 2; // 0 to 1
         const speedScore = (8 - duration) / 5; // 0 to 1
-        const multiplier = emojiMultipliers[selectedEmoji] || 1;
-        const points = Math.max(1, Math.min(10, Math.ceil((sizeScore + speedScore) * 7))) * multiplier;
+        const emojiIndex = goodEmojis.indexOf(selectedEmoji) + 1;
+        const points = Math.max(1, Math.min(10, Math.ceil((sizeScore + speedScore) * 7))) * emojiIndex;
     
         updateScore(points);
         incrementProgress(points);
