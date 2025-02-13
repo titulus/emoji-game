@@ -13,8 +13,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "vite build && copy sdk.js dist",
-    "build-prod": "vite build",
+    "build": "vite build",
+    "build-with-sdk": "vite build && copy sdk.js dist",
     "dev": "vite"
   },
   "keywords": [],
