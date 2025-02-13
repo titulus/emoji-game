@@ -13,6 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const emojiContainer = document.querySelector('.emoji-container') as HTMLDivElement;
 
     const goodEmojis: string[] = [
+        '🐷', '🐖', '🐽', '🦩', '🪱', '🦑', '🦀', '🦞', '🦐', '🐙' , 
+        '🐥', '🐤', '🐣', '🐡', '🐆', '🦘', '🐪', '🐫', '🐕', '🦧', '🦁', '🐯', '🐶', '🐹', '🦊', '🐅', '🐝', 
+        '🐂', '🐎', '🐒', '🦣', '🦬', '🐻', '🐵', '🦅', '🦉', '🐿️','🦌', '🦒', '🦔', 
+        '🐸', '🪲', '🐢', '🐍', '🦎', '🐛', '🐊', '🦚',
+        '🐠', '🐬', '🐋', '🐳', '🐟',
+        '🐇', '🐁', '🦙', '🐏', '🐑', '🐭', '🐨', '🐩', '🐘', '🐀', '🦏', '🐃', '🦍', '🦨', '🦡', 
         '🍓', '🍎', '🍒', '🍅', '🌶️',
         '💐', '🌷', '🌸', '🌺', '🌸', '🌺',
         '🍑', '🥭', '🍊', '🥕', '🍂',
@@ -20,14 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
         '🍐', '🍏', '🥝', '🥑', '🥬', '🥦', '🥒', '🌿', '🍀', '🍃', '🌳', '🌲',
         '🥥', '🥔', '🧄', '🧅',
         '🫐', '🍇', '🍆', '🪻',
-        '🐙', '🐷',
-        '🦁', '🦒', '🐶', '🐹', '🦊', '🐯', '🐻', '🐵', '🦅', '🦉', '🐿️', '🦙',
-        '🐸', '🐢', '🐍', '🐉',
-        '🐬',
-        '🐭', '🐨', '🐘',
         '🐰', '🐼', '🐮', '🐔', '🐧', '🦓', '🐏', '🐑',
         '🧛‍♀️', '🧛‍♂️', '👿', '😈', '🤖',
-        '🧟‍♀️', '🧟‍♂️',
+        '🧟‍♀️', '🧟‍♂️', '🐉',
         '🧞‍♀️', '🧞‍♂️', '🧞', '🦸‍♀️', '🦸‍♂️',
         '👻', '🦄',
         '🦹‍♀️', '🦹‍♂️', '🧚', '🧚‍♀️', '🧚‍♂️',
@@ -609,7 +610,17 @@ document.addEventListener('DOMContentLoaded', () => {
     uiManager.onStartButtonClick(handleStartButton);
     uiManager.onRestartButtonClick(handleRestartButton);
     uiManager.onRestartAdButtonClick(handleRestartAdButton);
-    uiManager.onSoundButtonClick(handleSoundButton);
-    uiManager.onPauseButtonClick(handlePauseButton);
-    uiManager.onResumeButtonClick(handleResumeButton);
-});
+        uiManager.onSoundButtonClick(handleSoundButton);
+        uiManager.onPauseButtonClick(handlePauseButton);
+        uiManager.onResumeButtonClick(handleResumeButton);
+    
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch(error => {
+                    console.error('Service Worker registration failed:', error);
+                });
+        }
+    });
